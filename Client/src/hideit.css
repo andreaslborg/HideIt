@@ -1,0 +1,40 @@
+/**
+ * Global styles for Hide It visual feedback.
+ * Applies reduced opacity to blocks marked as hidden while keeping the action bar at full opacity.
+ */
+
+/* Block List entries */
+umb-block-list-entry[data-hideit-hidden] {
+  opacity: 0.4;
+}
+
+umb-block-list-entry[data-hideit-hidden] uui-action-bar {
+  opacity: 1;
+}
+
+/* Block Grid entries */
+umb-block-grid-entry[data-hideit-hidden] {
+  opacity: 0.4;
+}
+
+umb-block-grid-entry[data-hideit-hidden] uui-action-bar {
+  opacity: 1;
+}
+
+/* Block RTE entries */
+umb-block-rte-entry[data-hideit-hidden] {
+  opacity: 0.4;
+}
+
+umb-block-rte-entry[data-hideit-hidden] uui-action-bar {
+  opacity: 1;
+}
+
+/* Generic block entries (future-proof) */
+[data-hideit-hidden] {
+  opacity: 0.4;
+}
+
+[data-hideit-hidden] uui-action-bar {
+  opacity: 1;
+}

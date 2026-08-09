@@ -1,0 +1,16 @@
+# Build outputs
+bin/
+obj/
+
+# Node
+Client/node_modules/
+Client/dist/
+
+# IDE
+.vs/
+.vscode/
+*.user
+
+# OS
+.DS_Store
+Thumbs.db

@@ -1,0 +1,40 @@
+<Project Sdk="Microsoft.NET.Sdk.Razor">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>HideIt</RootNamespace>
+    <StaticWebAssetBasePath>/</StaticWebAssetBasePath>
+    <EnableDefaultContentItems>false</EnableDefaultContentItems>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <PackageId>Our.Umbraco.HideIt</PackageId>
+    <Product>HideIt</Product>
+    <Title>Hide It - Block Visibility Toggle</Title>
+    <Description>Toggle block visibility directly from the block action bar. Blocks with hideIt=true are automatically filtered from frontend rendering.</Description>
+    <Authors>Your Name</Authors>
+    <PackageTags>umbraco;block;visibility;hide</PackageTags>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <RepositoryUrl>https://github.com/your-username/HideIt</RepositoryUrl>
+    <Version>1.0.0</Version>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Umbraco.Cms.Web.Common" Version="17.5.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Don't include the client folder as part of packaging nuget build -->
+    <Content Remove="Client\**" />
+
+    <!-- However make the umbraco-package.json included for dotnet pack or nuget package and visible to the solution -->
+    <None Include="Client\public\umbraco-package.json" Pack="false" />
+  </ItemGroup>
+
+  <!-- Include wwwroot files as static web assets -->
+  <ItemGroup>
+    <Content Include="wwwroot\**" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+</Project>

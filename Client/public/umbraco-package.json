@@ -1,0 +1,15 @@
+{
+  "$schema": "../../umbraco-package-schema.json",
+  "id": "hideit",
+  "name": "Hide It",
+  "version": "1.0.0",
+  "allowPublicAccess": true,
+  "extensions": [
+    {
+      "type": "bundle",
+      "alias": "HideIt.Bundle",
+      "name": "Hide It Bundle",
+      "js": "/App_Plugins/HideIt/hideit.js"
+    }
+  ]
+}
