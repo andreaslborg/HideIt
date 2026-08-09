@@ -1,0 +1,40 @@
+name: CI Build
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: Client/package-lock.json
+      
+      - name: Restore .NET dependencies
+        run: dotnet restore
+      
+      - name: Build .NET
+        run: dotnet build --no-restore --configuration Release
+      
+      - name: Install npm dependencies
+        working-directory: Client
+        run: npm ci
+      
+      - name: Build TypeScript
+        working-directory: Client
+        run: npm run build
