@@ -54,12 +54,11 @@ jobs:
           files: ./artifacts/*.nupkg
           generate_release_notes: true
       
+      - name: NuGet login (OIDC → temp API key)
+        uses: NuGet/login@v1
+        id: nuget-login
+        with:
+          user: andreaslborg
+      
       - name: Publish to NuGet
-        shell: bash
-        run: |
-          # Get OIDC token for NuGet trusted publishing
-          OIDC_TOKEN=$(curl -sLS -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
-            "${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=api://AzureADTokenExchange" | jq -r '.value')
-          
-          # Push with OIDC token
-          dotnet nuget push ./artifacts/*.nupkg --source https://api.nuget.org/v3/index.json --api-key "$OIDC_TOKEN"
+        run: dotnet nuget push ./artifacts/*.nupkg --api-key ${{ steps.nuget-login.outputs.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json
