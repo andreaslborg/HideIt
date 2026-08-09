@@ -17,7 +17,7 @@ Works with both **Block List** and **Block Grid** editors.
 - **Zero View Changes** — Hidden blocks vanish from the frontend *automagically*
 - **Nested Support** — BlockGrid areas? Yep, filters all the way down
 
-<img width="876" height="288" alt="toggle-button" src="https://github.com/user-attachments/assets/ce41eeb2-c2c9-4066-a959-055bfb69e0f9" />
+<img width="1220" height="874" alt="Hide It" src="https://github.com/user-attachments/assets/2ef439b4-ddc3-46ed-b751-25a90f748816" />
 
 
 ## Installation
@@ -33,6 +33,8 @@ dotnet add package Our.Umbraco.HideIt
 3. There is no step 3
 
 The toggle appears. The magic happens. Your frontend stays clean.
+
+<img width="876" height="288" alt="toggle-button" src="https://github.com/user-attachments/assets/ce41eeb2-c2c9-4066-a959-055bfb69e0f9" />
 
 ## How It Works
 
