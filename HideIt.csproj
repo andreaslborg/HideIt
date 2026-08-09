@@ -21,20 +21,21 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Umbraco.Cms.Web.Common" Version="17.5.0" />
+    <PackageReference Include="JetBrains.Annotations" Version="2024.3.0" PrivateAssets="all" />
+    <PackageReference Include="Umbraco.Cms.Web.Common" Version="17.5.0"/>
   </ItemGroup>
 
   <ItemGroup>
     <!-- Don't include the client folder as part of packaging nuget build -->
-    <Content Remove="Client\**" />
+    <Content Remove="Client\**"/>
 
     <!-- However make the umbraco-package.json included for dotnet pack or nuget package and visible to the solution -->
-    <None Include="Client\public\umbraco-package.json" Pack="false" />
+    <None Include="Client\public\umbraco-package.json" Pack="false"/>
   </ItemGroup>
 
   <!-- Include wwwroot files as static web assets -->
   <ItemGroup>
-    <Content Include="wwwroot\**" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="wwwroot\**" CopyToOutputDirectory="PreserveNewest"/>
   </ItemGroup>
 
 </Project>
