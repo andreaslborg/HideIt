@@ -4,49 +4,41 @@ A simple Umbraco 17+ package that allows content editors to toggle block visibil
 
 ## Features
 
-- **Toggle Button**: Shows in the block action bar (first position) with `icon-ban`
+- **Toggle Button**: Eye icon in the block action bar to hide/show blocks
 - **Visual Feedback**: Hidden blocks show reduced opacity in the backoffice
-- **Extension Methods**: Filter hidden blocks with `.WhereVisible()` in views
+- **Automatic Filtering**: Hidden blocks are automatically excluded from frontend rendering
 - **Nested Blocks**: BlockGrid areas are filtered recursively
 
 ## Installation
 
 ```bash
-dotnet add package Our.Umbraco.HideIt
+dotnet add package HideIt
 ```
+
+Or add a project reference during development.
 
 ## Usage
 
 1. Install the package
 2. Add a **True/False** property with alias `hideIt` to your block's **Settings** element type
 3. The toggle button will automatically appear on blocks with this property
-4. Use `.WhereVisible()` in your views to filter hidden blocks
+4. **That's it!** Hidden blocks are automatically filtered on the frontend
 
 ## How It Works
 
 ### Backoffice
-- A block action appears when a block's settings element type has a `hideIt` property
-- Clicking toggles the value and applies visual feedback (reduced opacity)
-- The action bar remains fully visible for easy toggling
+- A toggle icon appears when a block's settings element type has a `hideIt` property
+- Eye icon = visible, Eye-off icon = hidden
+- Clicking toggles the value and dims the block content
 
-### Frontend (Views)
+### Frontend
+Hidden blocks are **automatically filtered** - no code changes needed in your views!
 
-Use the `.WhereVisible()` extension method to filter hidden blocks:
+The package replaces Umbraco's built-in block property value converters to filter out blocks where `hideIt` is true.
 
-```razor
-@using HideIt
+### Optional: Manual Filtering
 
-@* Block List *@
-@foreach (var block in Model.ContentRows.WhereVisible())
-{
-    <partial name="@block.Content.ContentType.Alias" model="block" />
-}
-
-@* Block Grid *@
-@await Html.GetBlockGridHtmlAsync(Model.ContentGrid.WhereVisible())
-```
-
-## Extension Methods
+If you need more control, extension methods are also available:
 
 ```csharp
 using HideIt;
@@ -66,7 +58,7 @@ if (!block.IsBlockHidden())
 
 ## Requirements
 
-- Umbraco 17.0.0 or higher
+- Umbraco 17.5.0 or higher
 - .NET 10.0
 
 ## License
