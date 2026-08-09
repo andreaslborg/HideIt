@@ -9,6 +9,7 @@ Client/dist/
 # IDE
 .vs/
 .vscode/
+.idea/
 *.user
 
 # OS
