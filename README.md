@@ -57,8 +57,15 @@ if (!block.IsBlockHidden())
 
 ## Requirements
 
-- Umbraco **17.5+** (that's when block actions became a thing)
+- Umbraco **17.5+** _(that's when [block actions](https://releases.umbraco.com/release/umbraco/Umbraco-CMS/17.5.0) became a thing)_ or **18.x**
 - .NET 10.0
+
+## Versions
+
+| Package Version | Umbraco Version |
+|-----------------|-----------------|
+| 18.x            | 18.0.0 - 18.x   |
+| 17.x            | 17.5.0 - 17.x   |
 
 ## Contributing
 
