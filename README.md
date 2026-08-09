@@ -15,6 +15,9 @@ Ever wanted to temporarily hide a block without deleting it? Maybe it's a season
 - **Zero View Changes** — Hidden blocks vanish from the frontend *automagically*
 - **Nested Support** — BlockGrid areas? Yep, filters all the way down
 
+<img width="876" height="288" alt="toggle-button" src="https://github.com/user-attachments/assets/ce41eeb2-c2c9-4066-a959-055bfb69e0f9" />
+
+
 ## Installation
 
 ```bash
