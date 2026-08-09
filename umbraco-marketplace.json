@@ -1,0 +1,23 @@
+{
+  "$schema": "https://marketplace.umbraco.com/umbraco-marketplace-schema.json",
+  "Title": "Hide It",
+  "Description": "The \"now you see me, now you don't\" package for Umbraco blocks! Toggle block visibility with a single click. Hidden blocks are automatically filtered from frontend rendering.",
+  "Category": "Editor Tools",
+  "PackageType": "Package",
+  "LicenseTypes": ["Free"],
+  "Tags": ["block list", "block grid", "visibility", "toggle", "hide blocks"],
+  "AuthorDetails": {
+    "Name": "Andreas Lykke Borg",
+    "Url": "https://github.com/andreaslborg",
+    "ImageUrl": "https://github.com/andreaslborg.png",
+    "SyncContributorsFromRepository": true
+  },
+  "DocumentationUrl": "https://github.com/andreaslborg/HideIt#readme",
+  "IssueTrackerUrl": "https://github.com/andreaslborg/HideIt/issues",
+  "Screenshots": [
+    {
+      "ImageUrl": "https://raw.githubusercontent.com/andreaslborg/HideIt/main/screenshots/toggle-button.png",
+      "Caption": "Eye icon toggle in block action bar"
+    }
+  ]
+}
