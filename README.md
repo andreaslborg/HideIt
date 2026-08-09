@@ -6,7 +6,7 @@
 
 **The "now you see me, now you don't" package for Umbraco blocks!**
 
-Ever wanted to temporarily hide a block without deleting it? Maybe it's a seasonal promo, a work-in-progress section, or that testimonial from your ex-client. Whatever the reason — Hide It has your back.
+Ever wanted to temporarily hide a block without deleting it? Maybe it's a seasonal promo, a work-in-progress section, or that testimonial from your ex-client. Whatever the reason - Hide It has your back.
 
 ## What's in the Box?
 
