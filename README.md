@@ -1,6 +1,6 @@
 # Hide It - Umbraco Block Visibility Toggle
 
-A simple Umbraco 17+ package that allows content editors to toggle block visibility directly from the block action bar.
+A simple Umbraco 17.5+ package that allows content editors to toggle block visibility directly from the block action bar.
 
 ## Features
 
