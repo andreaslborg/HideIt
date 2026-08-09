@@ -1,66 +1,72 @@
-# Hide It - Umbraco Block Visibility Toggle
+# 👁️ Hide It
 
-A simple Umbraco 17.5+ package that allows content editors to toggle block visibility directly from the block action bar.
+**The "now you see me, now you don't" package for Umbraco blocks!**
 
-## Features
+Ever wanted to temporarily hide a block without deleting it? Maybe it's a seasonal promo, a work-in-progress section, or that testimonial from your ex-client. Whatever the reason — Hide It has your back.
 
-- **Toggle Button**: Eye icon in the block action bar to hide/show blocks
-- **Visual Feedback**: Hidden blocks show reduced opacity in the backoffice
-- **Automatic Filtering**: Hidden blocks are automatically excluded from frontend rendering
-- **Nested Blocks**: BlockGrid areas are filtered recursively
+## ✨ What's in the Box?
 
-## Installation
+- **One-Click Toggle** — Eye icon right there in the block action bar. Click it. Done.
+- **Visual Feedback** — Hidden blocks get dimmed so you know what's hiding
+- **Zero View Changes** — Hidden blocks vanish from the frontend *automagically*
+- **Nested Support** — BlockGrid areas? Yep, filters all the way down 🐢
+
+## 📦 Installation
 
 ```bash
-dotnet add package HideIt
+dotnet add package Our.Umbraco.HideIt
 ```
 
-Or add a project reference during development.
+## 🚀 Setup (It's Stupid Simple)
 
-## Usage
+1. Add a **True/False** property to your block's **Settings** element type
+2. Give it the alias `hideIt`
+3. There is no step 3
 
-1. Install the package
-2. Add a **True/False** property with alias `hideIt` to your block's **Settings** element type
-3. The toggle button will automatically appear on blocks with this property
-4. **That's it!** Hidden blocks are automatically filtered on the frontend
+The toggle appears. The magic happens. Your frontend stays clean.
 
-## How It Works
+## 🎭 How It Works
 
-### Backoffice
-- A toggle icon appears when a block's settings element type has a `hideIt` property
-- Eye icon = visible, Eye-off icon = hidden
-- Clicking toggles the value and dims the block content
+### In the Backoffice
+| Icon | Meaning |
+|------|---------|
+| 👁️ | Block is visible |
+| 👁️‍🗨️ | Block is hidden (dimmed in editor) |
 
-### Frontend
-Hidden blocks are **automatically filtered** - no code changes needed in your views!
+### On the Frontend
+Nothing! That's the point. Hidden blocks just... aren't there. The package intercepts Umbraco's property converters and filters them out before your views even see them.
 
-The package replaces Umbraco's built-in block property value converters to filter out blocks where `hideIt` is true.
+### 🔧 Want Manual Control?
 
-### Optional: Manual Filtering
-
-If you need more control, extension methods are also available:
+Don't trust the magic? Fair. Extension methods are available:
 
 ```csharp
 using HideIt;
 
-// Filter block list
+// Filter manually
 var visibleBlocks = Model.Blocks.WhereVisible();
-
-// Filter block grid (including nested areas)
 var visibleGrid = Model.Grid.WhereVisible();
 
-// Check individual blocks
+// Check a single block
 if (!block.IsBlockHidden())
 {
-    // Render block
+    // This block is ready for its close-up
 }
 ```
 
-## Requirements
+## 📋 Requirements
 
-- Umbraco 17.5.0 or higher
+- Umbraco **17.5+** (that's when block actions became a thing)
 - .NET 10.0
 
-## License
+## 🤝 Contributing
 
-MIT
+Found a bug? Got an idea? PRs welcome!
+
+## 📄 License
+
+MIT — Go wild.
+
+---
+
+*Made with ☕ and questionable life choices*
