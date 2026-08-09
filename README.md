@@ -1,23 +1,23 @@
-# 👁️ Hide It
+# Hide It
 
 **The "now you see me, now you don't" package for Umbraco blocks!**
 
 Ever wanted to temporarily hide a block without deleting it? Maybe it's a seasonal promo, a work-in-progress section, or that testimonial from your ex-client. Whatever the reason — Hide It has your back.
 
-## ✨ What's in the Box?
+## What's in the Box?
 
 - **One-Click Toggle** — Eye icon right there in the block action bar. Click it. Done.
 - **Visual Feedback** — Hidden blocks get dimmed so you know what's hiding
 - **Zero View Changes** — Hidden blocks vanish from the frontend *automagically*
-- **Nested Support** — BlockGrid areas? Yep, filters all the way down 🐢
+- **Nested Support** — BlockGrid areas? Yep, filters all the way down
 
-## 📦 Installation
+## Installation
 
 ```bash
 dotnet add package Our.Umbraco.HideIt
 ```
 
-## 🚀 Setup (It's Stupid Simple)
+## Setup (It's Stupid Simple)
 
 1. Add a **True/False** property to your block's **Settings** element type
 2. Give it the alias `hideIt`
@@ -25,7 +25,7 @@ dotnet add package Our.Umbraco.HideIt
 
 The toggle appears. The magic happens. Your frontend stays clean.
 
-## 🎭 How It Works
+## How It Works
 
 ### In the Backoffice
 | Icon | Meaning |
@@ -36,7 +36,7 @@ The toggle appears. The magic happens. Your frontend stays clean.
 ### On the Frontend
 Nothing! That's the point. Hidden blocks just... aren't there. The package intercepts Umbraco's property converters and filters them out before your views even see them.
 
-### 🔧 Want Manual Control?
+### Want Manual Control?
 
 Don't trust the magic? Fair. Extension methods are available:
 
@@ -54,19 +54,19 @@ if (!block.IsBlockHidden())
 }
 ```
 
-## 📋 Requirements
+## Requirements
 
 - Umbraco **17.5+** (that's when block actions became a thing)
 - .NET 10.0
 
-## 🤝 Contributing
+## Contributing
 
 Found a bug? Got an idea? PRs welcome!
 
-## 📄 License
+## License
 
 MIT — Go wild.
 
 ---
 
-*Made with ☕ and questionable life choices*
+*Made with coffee by the Umbraco community*
