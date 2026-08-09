@@ -4,9 +4,11 @@
 [![NuGet Version](https://img.shields.io/nuget/v/Our.Umbraco.HideIt.svg)](https://www.nuget.org/packages/Our.Umbraco.HideIt)
 [![NuGet Downloads](https://img.shields.io/nuget/dt/Our.Umbraco.HideIt.svg)](https://www.nuget.org/packages/Our.Umbraco.HideIt)
 
-**The "now you see me, now you don't" package for Umbraco blocks!**
+**The "now you see me, now you don't" package for Umbraco Block List and Block Grid!**
 
 Ever wanted to temporarily hide a block without deleting it? Maybe it's a seasonal promo, a work-in-progress section, or that testimonial from your ex-client. Whatever the reason - Hide It has your back.
+
+Works with both **Block List** and **Block Grid** editors.
 
 ## What's in the Box?
 
