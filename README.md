@@ -65,12 +65,9 @@ if (!block.IsBlockHidden())
 
 ## Contributing
 
-Found a bug? Got an idea? PRs welcome!
+Found a bug? Create an issue [here](https://github.com/andreaslborg/HideIt/issues).
+Got an idea? PRs welcome!
 
 ## License
 
-MIT — Go wild.
-
----
-
-*Made with coffee by the Umbraco community*
+MIT
