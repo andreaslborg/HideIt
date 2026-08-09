@@ -34,12 +34,6 @@ The toggle appears. The magic happens. Your frontend stays clean.
 
 ## How It Works
 
-### In the Backoffice
-| Icon | Meaning |
-|------|---------|
-| Eye | Block is visible |
-| Eye with slash | Block is hidden |
-
 ### On the Frontend
 Nothing! That's the point. Hidden blocks just... aren't there. The package intercepts Umbraco's property converters and filters them out before your views even see them.
 
