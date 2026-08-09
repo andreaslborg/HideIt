@@ -30,8 +30,8 @@ The toggle appears. The magic happens. Your frontend stays clean.
 ### In the Backoffice
 | Icon | Meaning |
 |------|---------|
-| 👁️ | Block is visible |
-| 👁️‍🗨️ | Block is hidden (dimmed in editor) |
+| <img src="https://raw.githubusercontent.com/lucide-icons/lucide/main/icons/eye.svg" width="20" height="20" /> | Block is visible |
+| <img src="https://raw.githubusercontent.com/lucide-icons/lucide/main/icons/eye-off.svg" width="20" height="20" /> | Block is hidden |
 
 ### On the Frontend
 Nothing! That's the point. Hidden blocks just... aren't there. The package intercepts Umbraco's property converters and filters them out before your views even see them.
