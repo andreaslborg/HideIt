@@ -14,7 +14,7 @@
     <Title>Hide It - Block Visibility Toggle</Title>
     <Description>Toggle block visibility directly from the block action bar. Blocks with hideIt=true are automatically filtered from frontend rendering.</Description>
     <Authors>Andreas Lykke Borg</Authors>
-    <PackageTags>umbraco;block;visibility;hide;toggle</PackageTags>
+    <PackageTags>umbraco;umbraco-marketplace;block;visibility;hide;toggle</PackageTags>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/andreaslborg/HideIt</PackageProjectUrl>
     <Version>17.5.0</Version>

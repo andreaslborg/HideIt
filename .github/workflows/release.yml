@@ -23,7 +23,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
           cache: 'npm'
           cache-dependency-path: Client/package-lock.json
       
@@ -49,7 +49,7 @@ jobs:
         run: dotnet pack --no-build --configuration Release -p:Version=${{ steps.version.outputs.VERSION }} --output ./artifacts
       
       - name: Create GitHub Release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         with:
           files: ./artifacts/*.nupkg
           generate_release_notes: true
