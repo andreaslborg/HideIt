@@ -6,6 +6,7 @@ import { UMB_BLOCK_ENTRY_CONTEXT } from '@umbraco-cms/backoffice/block';
 import { css, customElement, html, property, state } from '@umbraco-cms/backoffice/external/lit';
 import { UmbActionExecutedEvent } from '@umbraco-cms/backoffice/event';
 import { UmbLitElement } from '@umbraco-cms/backoffice/lit-element';
+import { getHideItPropertyAlias } from '../hide-it-config.js';
 
 /**
  * Custom block action element for Hide It toggle.
@@ -35,13 +36,14 @@ export class HideItBlockActionElement
     this.consumeContext(UMB_BLOCK_ENTRY_CONTEXT, async (context) => {
       if (!context) return;
 
+      const alias = await getHideItPropertyAlias(this);
       const settingsValuesObservable = await context.settingsValues();
-      
+
       this.observe(
         settingsValuesObservable,
         (values) => {
           const wasHidden = this._isHidden;
-          this._isHidden = values !== undefined && values.hideIt === true;
+          this._isHidden = values !== undefined && values[alias] === true;
           
           // Apply visual feedback to parent block
           if (wasHidden !== this._isHidden) {

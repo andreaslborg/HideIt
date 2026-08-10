@@ -1,31 +1,32 @@
 import { UMB_BLOCK_ENTRY_CONTEXT as E } from "@umbraco-cms/backoffice/block";
-import { html as c, css as H, property as C, state as x, customElement as B } from "@umbraco-cms/backoffice/external/lit";
-import { UmbActionExecutedEvent as M } from "@umbraco-cms/backoffice/event";
-import { UmbLitElement as O } from "@umbraco-cms/backoffice/lit-element";
-var A = Object.defineProperty, I = Object.getOwnPropertyDescriptor, _ = (t) => {
+import { html as c, css as H, property as C, state as x, customElement as A } from "@umbraco-cms/backoffice/external/lit";
+import { UmbActionExecutedEvent as B } from "@umbraco-cms/backoffice/event";
+import { UmbLitElement as M } from "@umbraco-cms/backoffice/lit-element";
+import { g as O } from "./bundle.manifests-C-BLKY2T.js";
+var I = Object.defineProperty, S = Object.getOwnPropertyDescriptor, v = (t) => {
   throw TypeError(t);
-}, b = (t, e, i, n) => {
-  for (var a = n > 1 ? void 0 : n ? I(e, i) : e, h = t.length - 1, f; h >= 0; h--)
-    (f = t[h]) && (a = (n ? f(e, i, a) : f(a)) || a);
-  return n && a && A(e, i, a), a;
-}, v = (t, e, i) => e.has(t) || _("Cannot " + i), r = (t, e, i) => (v(t, e, "read from private field"), e.get(t)), p = (t, e, i) => e.has(t) ? _("Cannot add the same private member more than once") : e instanceof WeakSet ? e.add(t) : e.set(t, i), m = (t, e, i, n) => (v(t, e, "write to private field"), e.set(t, i), i), u = (t, e, i) => (v(t, e, "access private method"), i), l, o, s, g, y, w, k;
-let d = class extends O {
+}, b = (t, e, i, a) => {
+  for (var o = a > 1 ? void 0 : a ? S(e, i) : e, h = t.length - 1, f; h >= 0; h--)
+    (f = t[h]) && (o = (a ? f(e, i, o) : f(o)) || o);
+  return a && o && I(e, i, o), o;
+}, m = (t, e, i) => e.has(t) || v("Cannot " + i), r = (t, e, i) => (m(t, e, "read from private field"), e.get(t)), p = (t, e, i) => e.has(t) ? v("Cannot add the same private member more than once") : e instanceof WeakSet ? e.add(t) : e.set(t, i), _ = (t, e, i, a) => (m(t, e, "write to private field"), e.set(t, i), i), l = (t, e, i) => (m(t, e, "access private method"), i), u, n, s, g, y, w, k;
+let d = class extends M {
   constructor() {
-    super(), p(this, s), p(this, l), this._isHidden = !1, p(this, o), this.consumeContext(E, async (t) => {
+    super(), p(this, s), p(this, u), this._isHidden = !1, p(this, n), this.consumeContext(E, async (t) => {
       if (!t) return;
-      const e = await t.settingsValues();
+      const e = await O(this), i = await t.settingsValues();
       this.observe(
-        e,
-        (i) => {
-          const n = this._isHidden;
-          this._isHidden = i !== void 0 && i.hideIt === !0, n !== this._isHidden && u(this, s, y).call(this);
+        i,
+        (a) => {
+          const o = this._isHidden;
+          this._isHidden = a !== void 0 && a[e] === !0, o !== this._isHidden && l(this, s, y).call(this);
         },
         "observeHideItValue"
       );
     });
   }
   set api(t) {
-    m(this, l, t);
+    _(this, u, t);
   }
   render() {
     if (!this.manifest) return c``;
@@ -36,14 +37,14 @@ let d = class extends O {
         look="secondary"
         label=${t}
         title=${t}
-        @click=${u(this, s, w)}>
-        ${this._isHidden ? c`<uui-icon name="icon-eye"></uui-icon>` : u(this, s, k).call(this)}
+        @click=${l(this, s, w)}>
+        ${this._isHidden ? c`<uui-icon name="icon-eye"></uui-icon>` : l(this, s, k).call(this)}
       </uui-button>
     `;
   }
 };
-l = /* @__PURE__ */ new WeakMap();
-o = /* @__PURE__ */ new WeakMap();
+u = /* @__PURE__ */ new WeakMap();
+n = /* @__PURE__ */ new WeakMap();
 s = /* @__PURE__ */ new WeakSet();
 g = function() {
   let t = this;
@@ -60,15 +61,15 @@ g = function() {
   return null;
 };
 y = function() {
-  if (r(this, o) || m(this, o, u(this, s, g).call(this) ?? void 0), r(this, o)) {
-    const e = r(this, o).shadowRoot?.querySelector("umb-extension-slot");
-    this._isHidden ? (r(this, o).setAttribute("data-hideit-hidden", ""), e && (e.style.opacity = "0.4", e.style.display = "block")) : (r(this, o).removeAttribute("data-hideit-hidden"), e && (e.style.opacity = "", e.style.display = ""));
+  if (r(this, n) || _(this, n, l(this, s, g).call(this) ?? void 0), r(this, n)) {
+    const e = r(this, n).shadowRoot?.querySelector("umb-extension-slot");
+    this._isHidden ? (r(this, n).setAttribute("data-hideit-hidden", ""), e && (e.style.opacity = "0.4", e.style.display = "block")) : (r(this, n).removeAttribute("data-hideit-hidden"), e && (e.style.opacity = "", e.style.display = ""));
   }
 };
 w = async function(t) {
   t.stopPropagation();
   try {
-    await r(this, l)?.execute(), this.dispatchEvent(new M());
+    await r(this, u)?.execute(), this.dispatchEvent(new B());
   } catch (e) {
     console.error("Error executing Hide It action:", e);
   }
@@ -112,11 +113,11 @@ b([
   x()
 ], d.prototype, "_isHidden", 2);
 d = b([
-  B("hideit-block-action")
+  A("hideit-block-action")
 ], d);
-const $ = d;
+const T = d;
 export {
   d as HideItBlockActionElement,
-  $ as default
+  T as default
 };
-//# sourceMappingURL=hide-it-block-action.element-Dnez-a2n.js.map
+//# sourceMappingURL=hide-it-block-action.element-CmxW1NNf.js.map
