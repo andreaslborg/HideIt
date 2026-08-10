@@ -33,12 +33,8 @@ public class HideItConfigurationController : ManagementApiControllerBase {
   [HttpGet( "configuration" )]
   [ProducesResponseType( typeof( HideItConfigurationResponseModel ), StatusCodes.Status200OK )]
   public IActionResult Configuration() {
-    string alias = _settings.Value.PropertyAlias;
-    if ( string.IsNullOrWhiteSpace( alias ) ) {
-      alias = HideItSettings.DefaultPropertyAlias;
-    }
-
-    return Ok( new HideItConfigurationResponseModel { PropertyAlias = alias.Trim() } );
+    string alias = HideItSettings.NormalizePropertyAlias( _settings.Value.PropertyAlias );
+    return Ok( new HideItConfigurationResponseModel { PropertyAlias = alias } );
   }
 }
 
@@ -49,5 +45,5 @@ public class HideItConfigurationResponseModel {
   /// <summary>
   /// The property alias used to determine if a block should be hidden.
   /// </summary>
-  public string PropertyAlias { get; set; } = HideItSettings.DefaultPropertyAlias;
+  public string PropertyAlias { get; init; } = HideItSettings.DefaultPropertyAlias;
 }
