@@ -36,6 +36,20 @@ The toggle appears. The magic happens. Your frontend stays clean.
 
 <img width="876" height="288" alt="toggle-button" src="https://github.com/user-attachments/assets/ce41eeb2-c2c9-4066-a959-055bfb69e0f9" />
 
+### Want a Custom Alias?
+
+Maybe `hideIt` isn't your style, or you're migrating a site that already has its own "hide this" property. Point Hide It at any alias in `appsettings.json`:
+
+```json
+{
+  "HideIt": {
+    "PropertyAlias": "hideFromSite"
+  }
+}
+```
+
+Both the backoffice toggle and the frontend filtering pick up the custom alias. Leave the setting out and the default `hideIt` keeps working.
+
 ## How It Works
 
 ### On the Frontend
