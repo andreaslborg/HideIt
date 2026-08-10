@@ -12,8 +12,21 @@ namespace HideIt;
 public static class BlockExtensions {
   /// <summary>
   /// The property alias used to determine if a block should be hidden.
+  /// Defaults to "hideIt" and can be customized via the "HideIt:PropertyAlias" app setting.
   /// </summary>
-  private const string _hideItPropertyAlias = "hideIt";
+  private static string _hideItPropertyAlias = HideItSettings.DefaultPropertyAlias;
+
+  /// <summary>
+  /// Sets the property alias used to determine if a block should be hidden.
+  /// Called at composition time when a custom alias is configured.
+  /// </summary>
+  /// <param name="alias">The custom property alias.</param>
+  internal static void SetPropertyAlias( string alias ) {
+    if ( string.IsNullOrWhiteSpace( alias ) ) {
+      return;
+    }
+    _hideItPropertyAlias = alias;
+  }
 
   /// <summary>
   /// Filters out blocks that have hideIt set to true in their settings.

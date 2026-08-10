@@ -3,9 +3,11 @@ import { UmbBlockActionBase, UMB_BLOCK_MANAGER_CONTEXT } from '@umbraco-cms/back
 import { UMB_BLOCK_ENTRY_CONTEXT } from '@umbraco-cms/backoffice/block';
 import type { UmbControllerHost } from '@umbraco-cms/backoffice/controller-api';
 import type { UmbBlockActionArgs } from '@umbraco-cms/backoffice/block';
+import { getHideItPropertyAlias } from '../hide-it-config.js';
 
 /**
- * Block action that toggles the "hideIt" property value in the block's settings.
+ * Block action that toggles the Hide It property value in the block's settings.
+ * The property alias defaults to "hideIt" and can be customized via the "HideIt:PropertyAlias" app setting.
  */
 export class HideItToggleAction extends UmbBlockActionBase<MetaBlockActionDefaultKind> {
   #context?: typeof UMB_BLOCK_ENTRY_CONTEXT.TYPE;
@@ -35,10 +37,11 @@ export class HideItToggleAction extends UmbBlockActionBase<MetaBlockActionDefaul
     }
 
     // Find the current hideIt value in the values array
+    const alias = await getHideItPropertyAlias(this);
     const values = settings.values ?? [];
-    const hideItIndex = values.findIndex(v => v.alias === 'hideIt');
+    const hideItIndex = values.findIndex(v => v.alias === alias);
     const currentValue = hideItIndex >= 0 ? values[hideItIndex].value === true : false;
-    
+
     // Create updated values array
     const newValues = [...values];
     if (hideItIndex >= 0) {
@@ -46,8 +49,8 @@ export class HideItToggleAction extends UmbBlockActionBase<MetaBlockActionDefaul
       newValues[hideItIndex] = { ...newValues[hideItIndex], value: !currentValue };
     } else {
       // Add new value (shouldn't happen if property exists, but just in case)
-      newValues.push({ 
-        alias: 'hideIt', 
+      newValues.push({
+        alias,
         value: !currentValue,
         culture: null,
         segment: null,
