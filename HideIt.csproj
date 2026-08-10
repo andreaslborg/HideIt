@@ -40,10 +40,11 @@
   <Target
     Name="BuildClient"
     Inputs="@(ClientBuildInput)"
-    Outputs="wwwroot/App_Plugins/HideIt/hideit.js;wwwroot/App_Plugins/HideIt/umbraco-package.json"
+    Outputs="$(IntermediateOutputPath)hideit.client.stamp"
     Condition="'$(DesignTimeBuild)' != 'true'">
-    <Exec WorkingDirectory="$(MSBuildProjectDirectory)/Client" Command="npm ci" />
-    <Exec WorkingDirectory="$(MSBuildProjectDirectory)/Client" Command="npm run build" />
+    <Exec WorkingDirectory="$(MSBuildProjectDirectory)\Client" Command="npm ci" />
+    <Exec WorkingDirectory="$(MSBuildProjectDirectory)\Client" Command="npm run build" />
+    <Touch Files="$(IntermediateOutputPath)hideit.client.stamp" AlwaysCreate="true" />
   </Target>
 
   <Target Name="IncludeClientAssets" BeforeTargets="AssignTargetPaths" DependsOnTargets="BuildClient">
