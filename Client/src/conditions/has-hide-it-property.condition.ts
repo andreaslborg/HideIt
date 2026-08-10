@@ -31,8 +31,7 @@ export class HideItHasPropertyCondition
       this.observe(
         settingsValuesObservable,
         (settingsValues) => {
-          // If settingsValues exists and has the alias as a key, the property exists
-          const hasHideIt = settingsValues !== undefined && alias in settingsValues;
+          const hasHideIt = settingsValues !== undefined && Object.prototype.hasOwnProperty.call(settingsValues, alias);
           this.permitted = hasHideIt;
         },
         'observeSettingsForHideIt',
