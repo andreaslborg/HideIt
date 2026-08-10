@@ -34,9 +34,25 @@
     <None Include="Client\public\umbraco-package.json" Pack="false"/>
   </ItemGroup>
 
-  <!-- Include wwwroot files as static web assets -->
   <ItemGroup>
-    <Content Include="wwwroot\**" CopyToOutputDirectory="PreserveNewest"/>
+    <ClientBuildInput Include="Client/package.json;Client/package-lock.json;Client/tsconfig.json;Client/vite.config.ts;Client/src/**;Client/public/**" />
   </ItemGroup>
+
+  <Target
+    Name="BuildClient"
+    Inputs="@(ClientBuildInput)"
+    Outputs="$(IntermediateOutputPath)hideit.client.stamp"
+    Condition="'$(DesignTimeBuild)' != 'true'">
+    <Exec WorkingDirectory="$(MSBuildProjectDirectory)\Client" Command="npm ci" />
+    <Exec WorkingDirectory="$(MSBuildProjectDirectory)\Client" Command="npm run build" />
+    <Touch Files="$(IntermediateOutputPath)hideit.client.stamp" AlwaysCreate="true" />
+  </Target>
+
+  <Target Name="IncludeClientAssets" BeforeTargets="AssignTargetPaths" DependsOnTargets="BuildClient">
+    <!-- Vite output does not exist when MSBuild first evaluates a clean checkout. -->
+    <ItemGroup>
+      <Content Include="wwwroot/**" CopyToOutputDirectory="PreserveNewest" />
+    </ItemGroup>
+  </Target>
 
 </Project>

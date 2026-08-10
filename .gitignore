@@ -5,6 +5,7 @@ obj/
 # Node
 Client/node_modules/
 Client/dist/
+wwwroot/App_Plugins/HideIt/
 
 # IDE
 .vs/
