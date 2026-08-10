@@ -5,6 +5,8 @@ import type { UmbClassInterface } from '@umbraco-cms/backoffice/class-api';
  * The default property alias used when no custom alias is configured.
  */
 export const DEFAULT_HIDE_IT_ALIAS = 'hideIt';
+const SAFE_ALIAS_PATTERN = /^[A-Za-z][A-Za-z0-9_]*$/;
+const UNSAFE_ALIAS_VALUES = new Set(['__proto__', 'constructor', 'prototype']);
 
 let aliasPromise: Promise<string> | undefined;
 
@@ -27,15 +29,28 @@ async function fetchPropertyAlias(host: UmbClassInterface): Promise<string> {
   const config = authContext.getOpenApiConfiguration();
   const token = await config.token();
 
-  const response = await fetch(`${config.base}/umbraco/management/api/v1/hideit/configuration`, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
+  try {
+    const response = await fetch(`${config.base}/umbraco/management/api/v1/hideit/configuration`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
 
-  if (!response.ok) {
+    if (!response.ok) {
+      return DEFAULT_HIDE_IT_ALIAS;
+    }
+
+    const data = (await response.json()) as { propertyAlias?: unknown };
+    return normalizeAlias(data.propertyAlias);
+  } catch (error) {
+    console.error('[HideIt] Error fetching configuration:', error);
+    return DEFAULT_HIDE_IT_ALIAS;
+  }
+}
+
+function normalizeAlias(alias: unknown): string {
+  const value = typeof alias === 'string' ? alias.trim() : '';
+  if (!value || !SAFE_ALIAS_PATTERN.test(value) || UNSAFE_ALIAS_VALUES.has(value)) {
     return DEFAULT_HIDE_IT_ALIAS;
   }
 
-  const data = (await response.json()) as { propertyAlias?: unknown };
-  const alias = typeof data.propertyAlias === 'string' ? data.propertyAlias.trim() : '';
-  return alias.length > 0 ? alias : DEFAULT_HIDE_IT_ALIAS;
+  return value;
 }
