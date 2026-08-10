@@ -22,6 +22,9 @@ public static class BlockExtensions {
   /// </summary>
   /// <param name="alias">The custom property alias.</param>
   internal static void SetPropertyAlias( string alias ) {
+    if ( string.IsNullOrWhiteSpace( alias ) ) {
+      return;
+    }
     _hideItPropertyAlias = alias;
   }
 
