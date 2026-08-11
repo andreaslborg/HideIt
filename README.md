@@ -95,7 +95,7 @@ An in-repo Umbraco 18 site is available under `HideIt.Test`.
 - Start `HideIt.Test` with **IIS Express** or the **Umbraco.Web.UI** profile
 - The site uses the local `HideIt.csproj` via project reference, so backoffice/frontend changes are picked up automatically
 - The sample is intentionally a single-page homepage test surface focused on **Content Rows** (Block List) and **Content Grid** (Block Grid)
-- The sample ships with a seeded SQLite database and media, so you can start testing immediately
+- The sample ships with a seeded SQLite database, so you can start testing immediately
 - Backoffice login: `admin@example.com` / `1234567890`
 
 Found a bug? Create an issue [here](https://github.com/andreaslborg/HideIt/issues).
