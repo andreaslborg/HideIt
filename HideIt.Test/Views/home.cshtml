@@ -1,0 +1,29 @@
+﻿@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
+@using Umbraco.Cms.Core.Models.Blocks
+
+@{
+  Layout = "master.cshtml";
+  var contentRows = Model.Value<BlockListModel>( "contentRows" );
+  var contentGrid = Model.Value<BlockGridModel>( "contentGrid" );
+}
+
+<main class="container py-5">
+  <header class="mb-5 text-center">
+    <h1>@Model.Name</h1>
+    <p class="text-muted mb-0">Single-page HideIt test site</p>
+  </header>
+
+  @if ( contentRows?.Any() == true ) {
+    <section class="mb-5">
+      <h2 class="h4 mb-3">Content Rows</h2>
+      @await Html.GetBlockListHtmlAsync( contentRows )
+    </section>
+  }
+
+  @if ( contentGrid?.Any() == true ) {
+    <section>
+      <h2 class="h4 mb-3">Content Grid</h2>
+      @await Html.GetBlockGridHtmlAsync( contentGrid )
+    </section>
+  }
+</main>
