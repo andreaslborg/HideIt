@@ -22,8 +22,8 @@
 
   <ItemGroup>
     <PackageReference Include="JetBrains.Annotations" Version="2024.3.0" PrivateAssets="all" />
-    <PackageReference Include="Umbraco.Cms.Api.Management" Version="[18.0.0, 19.0.0)" />
-    <PackageReference Include="Umbraco.Cms.Web.Common" Version="[18.0.0, 19.0.0)" />
+    <PackageReference Include="Umbraco.Cms.Api.Management" Version="[17.5.0, 18.0.0)" />
+    <PackageReference Include="Umbraco.Cms.Web.Common" Version="[17.5.0, 18.0.0)" />
   </ItemGroup>
 
   <ItemGroup>

@@ -6,8 +6,8 @@
     <CompressionEnabled>false</CompressionEnabled>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Umbraco.Cms" Version="18.1.0" />
-    <PackageReference Include="Umbraco.Cms.DevelopmentMode.Backoffice" Version="18.1.0" />
+    <PackageReference Include="Umbraco.Cms" Version="17.6.0" />
+    <PackageReference Include="Umbraco.Cms.DevelopmentMode.Backoffice" Version="17.6.0" />
     <ProjectReference Include="..\HideIt.csproj" />
   </ItemGroup>
   <ItemGroup>
