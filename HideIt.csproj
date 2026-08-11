@@ -27,6 +27,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Remove="HideIt.Test\**\*.cs" />
+    <Content Remove="HideIt.Test\**" />
+    <EmbeddedResource Remove="HideIt.Test\**" />
+    <None Remove="HideIt.Test\**" />
+
     <!-- Don't include the client folder as part of packaging nuget build -->
     <Content Remove="Client\**"/>
 

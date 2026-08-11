@@ -1,0 +1,24 @@
+@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<Umbraco.Cms.Core.Models.Blocks.BlockGridItem>
+@using System.Text.Json
+
+@{
+  var content = Model.Content.Value<string>( "content" );
+  var isHidden = Model.Settings?.Value<bool>( "hide" ) ?? false;
+  if ( !string.IsNullOrWhiteSpace( content ) && content.TrimStart().StartsWith( "{" ) ) {
+    try {
+      using var document = JsonDocument.Parse( content );
+      if ( document.RootElement.TryGetProperty( "markup", out var markupProperty ) ) {
+        content = markupProperty.GetString() ?? string.Empty;
+      }
+    } catch ( JsonException ) {
+    }
+  }
+
+  if ( isHidden || string.IsNullOrWhiteSpace( content ) ) {
+    return;
+  }
+}
+
+<div class="richtext">
+  @Html.Raw( content )
+</div>

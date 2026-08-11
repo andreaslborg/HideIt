@@ -1,0 +1,21 @@
+﻿@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<Umbraco.Cms.Core.Models.Blocks.BlockListModel>
+@{
+  if ( !Model.Any() ) {
+    return;
+  }
+}
+
+@foreach ( var block in Model ) {
+  var data = block.Content;
+  var partialViewName = "blocklist/Components/" + data.ContentType.Alias;
+
+  try {
+    @await Html.PartialAsync( partialViewName, block )
+  } catch ( InvalidOperationException ) {
+    <p>
+      <strong>Could not render component of type: @data.ContentType.Alias</strong>
+      <br/>
+      This sample only includes the partials required by the seeded single-page test content.
+    </p>
+  }
+}
