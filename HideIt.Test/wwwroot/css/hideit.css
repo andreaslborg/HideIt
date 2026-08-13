@@ -1,0 +1,26 @@
+/* Hide It demo stylesheet for the test site.
+   This is loaded when HideIt:CssPath = "/css/hideit.css". */
+
+/* Hidden state */
+[data-hideit-hidden],
+.hideit-block--hidden {
+  opacity: 0.10;
+  border-left: 4px solid #f97316;
+  box-shadow: inset 0 0 0 9999px rgb(249 115 22 / 8%);
+  transition: opacity 120ms ease, box-shadow 120ms ease, border-color 120ms ease;
+}
+
+/* Keep action bar fully visible on hidden blocks */
+umb-block-list-entry[data-hideit-hidden] uui-action-bar,
+umb-block-grid-entry[data-hideit-hidden] uui-action-bar,
+umb-block-rte-entry[data-hideit-hidden] uui-action-bar,
+[data-hideit-hidden] uui-action-bar {
+  opacity: 1;
+}
+
+/* Visible state hook */
+.hideit-block--visible {
+  opacity: 1;
+  border-left-color: transparent;
+  box-shadow: none;
+}
