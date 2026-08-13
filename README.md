@@ -71,6 +71,29 @@ Maybe `hideIt` isn't your style, or you're migrating a site that already has its
 
 Both the backoffice toggle and the frontend filtering pick up the custom alias. Leave the setting out and the default `hideIt` keeps working.
 
+### Want Full Control of Block Styling?
+
+Set `HideIt:CssPath` to your own stylesheet path in `appsettings.json`:
+
+```json
+{
+  "HideIt": {
+    "PropertyAlias": "hideIt",
+    "CssPath": "/css/hideit-custom.css"
+  }
+}
+```
+
+- If `CssPath` is **not set**, Hide It keeps the current default dimmed styling for hidden blocks.
+- If `CssPath` **is set**, Hide It skips its default styling and loads your stylesheet instead (including inside block-entry shadow roots).
+
+Hide It adds these state markers on each block entry:
+
+- Hidden state: `data-hideit-hidden` attribute + `.hideit-block--hidden` class
+- Visible state: `.hideit-block--visible` class
+
+Use those selectors in your CSS to style hidden/visible blocks exactly how you want.
+
 ### Manual Filtering
 
 Don't trust the magic? Fair. Extension methods are available:

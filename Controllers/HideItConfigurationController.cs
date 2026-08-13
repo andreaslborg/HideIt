@@ -29,12 +29,17 @@ public class HideItConfigurationController : ManagementApiControllerBase {
   /// <summary>
   /// Gets the Hide It configuration.
   /// </summary>
-  /// <returns>The configured property alias, falling back to the default when not customized.</returns>
+  /// <returns>The configured property alias and optional custom stylesheet path.</returns>
   [HttpGet( "configuration" )]
   [ProducesResponseType( typeof( HideItConfigurationResponseModel ), StatusCodes.Status200OK )]
   public IActionResult Configuration() {
     string alias = HideItSettings.NormalizePropertyAlias( _settings.Value.PropertyAlias );
-    return Ok( new HideItConfigurationResponseModel { PropertyAlias = alias } );
+    string? cssPath = HideItSettings.NormalizeCssPath( _settings.Value.CssPath );
+
+    return Ok( new HideItConfigurationResponseModel {
+      PropertyAlias = alias,
+      CssPath = cssPath
+    } );
   }
 }
 
@@ -46,4 +51,9 @@ public class HideItConfigurationResponseModel {
   /// The property alias used to determine if a block should be hidden.
   /// </summary>
   public string PropertyAlias { get; init; } = HideItSettings.DefaultPropertyAlias;
+
+  /// <summary>
+  /// Optional custom stylesheet path for block state styling.
+  /// </summary>
+  public string? CssPath { get; init; }
 }

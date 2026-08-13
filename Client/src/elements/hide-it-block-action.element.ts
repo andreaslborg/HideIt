@@ -6,12 +6,16 @@ import { UMB_BLOCK_ENTRY_CONTEXT } from '@umbraco-cms/backoffice/block';
 import { css, customElement, html, property, state } from '@umbraco-cms/backoffice/external/lit';
 import { UmbActionExecutedEvent } from '@umbraco-cms/backoffice/event';
 import { UmbLitElement } from '@umbraco-cms/backoffice/lit-element';
-import { getHideItPropertyAlias } from '../hide-it-config.js';
+import {
+  applyHideItCustomShadowStylesheet,
+  ensureHideItCustomStylesheet,
+  getHideItConfiguration
+} from '../hide-it-config.js';
 
 /**
  * Custom block action element for Hide It toggle.
  * Shows icon-ban when hidden, icon-eye when visible.
- * Also applies reduced opacity to the parent block when hidden.
+ * Also applies a hidden/visible state marker to the parent block.
  */
 @customElement('hideit-block-action')
 export class HideItBlockActionElement
@@ -29,14 +33,28 @@ export class HideItBlockActionElement
 
   @state()
   private _isHidden = false;
+  private _useDefaultStyling = true;
+  private _hasAppliedVisualState = false;
+  private _customCssPath: string | null = null;
 
   constructor() {
     super();
 
     this.consumeContext(UMB_BLOCK_ENTRY_CONTEXT, async (context) => {
+      this.#blockEntryElement = undefined;
+      this._hasAppliedVisualState = false;
+
       if (!context) return;
 
-      const alias = await getHideItPropertyAlias(this);
+      const configuration = await getHideItConfiguration(this);
+      const alias = configuration.propertyAlias;
+      this._customCssPath = configuration.cssPath;
+      this._useDefaultStyling = this._customCssPath === null;
+
+      if (this._customCssPath !== null) {
+        ensureHideItCustomStylesheet(this._customCssPath);
+      }
+
       const settingsValuesObservable = await context.settingsValues();
 
       this.observe(
@@ -46,8 +64,9 @@ export class HideItBlockActionElement
           this._isHidden = values !== undefined && values[alias] === true;
           
           // Apply visual feedback to parent block
-          if (wasHidden !== this._isHidden) {
+          if (!this._hasAppliedVisualState || wasHidden !== this._isHidden) {
             this.#updateBlockVisualState();
+            this._hasAppliedVisualState = true;
           }
         },
         'observeHideItValue',
@@ -88,20 +107,28 @@ export class HideItBlockActionElement
     
     if (this.#blockEntryElement) {
       const el = this.#blockEntryElement as HTMLElement;
+      el.classList.toggle('hideit-block--hidden', this._isHidden);
+      el.classList.toggle('hideit-block--visible', !this._isHidden);
+
+      if (this._customCssPath !== null) {
+        void applyHideItCustomShadowStylesheet(el, this._customCssPath);
+      }
+
       // Target the umb-extension-slot which contains content but NOT the action bar
       const content = el.shadowRoot?.querySelector('umb-extension-slot') as HTMLElement;
       if (this._isHidden) {
         this.#blockEntryElement.setAttribute('data-hideit-hidden', '');
-        if (content) {
+        if (content && this._useDefaultStyling) {
           content.style.opacity = '0.4';
           content.style.display = 'block'; // Ensure opacity applies (not display: contents)
         }
       } else {
         this.#blockEntryElement.removeAttribute('data-hideit-hidden');
-        if (content) {
-          content.style.opacity = '';
-          content.style.display = '';
-        }
+      }
+
+      if (content && (!this._isHidden || !this._useDefaultStyling)) {
+        content.style.opacity = '';
+        content.style.display = '';
       }
     }
   }
