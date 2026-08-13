@@ -17,13 +17,16 @@ export class HideItHasPropertyCondition
   #manager?: typeof UMB_BLOCK_MANAGER_CONTEXT.TYPE;
   #settingsElementTypeKey?: string | null;
   #aliasPromise?: Promise<string>;
+  #evaluationId = 0;
 
   constructor(host: UmbControllerHost, args: UmbConditionControllerArguments<HideItHasPropertyConditionConfig>) {
     super(host, args);
 
     this.consumeContext(UMB_BLOCK_ENTRY_CONTEXT, (context) => {
       if (!context) {
-        this.permitted = false;
+        this.removeUmbControllerByAlias('observeSettingsElementTypeKeyForHideIt');
+        this.#settingsElementTypeKey = undefined;
+        this.#scheduleEvaluation();
         return;
       }
 
@@ -31,7 +34,7 @@ export class HideItHasPropertyCondition
         context.settingsElementTypeKey,
         (settingsElementTypeKey) => {
           this.#settingsElementTypeKey = settingsElementTypeKey;
-          void this.#observeHideItProperty();
+          this.#scheduleEvaluation();
         },
         'observeSettingsElementTypeKeyForHideIt',
       );
@@ -39,28 +42,55 @@ export class HideItHasPropertyCondition
 
     this.consumeContext(UMB_BLOCK_MANAGER_CONTEXT, (manager) => {
       this.#manager = manager;
-      void this.#observeHideItProperty();
+
+      if (!manager) {
+        this.removeUmbControllerByAlias('observeBlockTypesForHideIt');
+        this.#scheduleEvaluation();
+        return;
+      }
+
+      // Re-evaluate when Umbraco registers structures for newly loaded block types.
+      this.observe(
+        manager.blockTypes,
+        () => this.#scheduleEvaluation(),
+        'observeBlockTypesForHideIt',
+      );
     });
   }
 
-  async #observeHideItProperty() {
+  #scheduleEvaluation() {
+    const evaluationId = ++this.#evaluationId;
+
+    this.removeUmbControllerByAlias('observeHideItPropertyStructure');
+    this.permitted = false;
+
+    void this.#observeHideItProperty(evaluationId).catch((error: unknown) => {
+      if (evaluationId !== this.#evaluationId) return;
+
+      console.error('[HideIt] Error checking the settings property structure:', error);
+    });
+  }
+
+  async #observeHideItProperty(evaluationId: number) {
     const manager = this.#manager;
     const settingsElementTypeKey = this.#settingsElementTypeKey;
 
     if (!manager || settingsElementTypeKey == null) {
-      this.permitted = false;
       return;
     }
 
+    await manager.contentTypesLoaded;
+    if (!this.#isCurrentEvaluation(evaluationId, manager, settingsElementTypeKey)) return;
+
     const structure = manager.getStructure(settingsElementTypeKey);
-    if (!structure) {
-      this.permitted = false;
-      return;
-    }
+    if (!structure) return;
 
     this.#aliasPromise ??= getHideItPropertyAlias(this);
     const alias = await this.#aliasPromise;
+    if (!this.#isCurrentEvaluation(evaluationId, manager, settingsElementTypeKey)) return;
+
     const propertyObservable = await structure.propertyStructureByAlias(alias);
+    if (!this.#isCurrentEvaluation(evaluationId, manager, settingsElementTypeKey)) return;
 
     this.observe(
       propertyObservable,
@@ -68,6 +98,18 @@ export class HideItHasPropertyCondition
         this.permitted = property !== undefined;
       },
       'observeHideItPropertyStructure',
+    );
+  }
+
+  #isCurrentEvaluation(
+    evaluationId: number,
+    manager: typeof UMB_BLOCK_MANAGER_CONTEXT.TYPE,
+    settingsElementTypeKey: string,
+  ) {
+    return (
+      evaluationId === this.#evaluationId &&
+      manager === this.#manager &&
+      settingsElementTypeKey === this.#settingsElementTypeKey
     );
   }
 }
