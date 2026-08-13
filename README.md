@@ -36,7 +36,28 @@ The toggle appears. The magic happens. Your frontend stays clean.
 
 <img width="876" height="288" alt="toggle-button" src="https://github.com/user-attachments/assets/ce41eeb2-c2c9-4066-a959-055bfb69e0f9" />
 
-### Want a Custom Alias?
+Need more control? See **Advanced / Extensibility** near the end.
+
+## How It Works
+
+### On the Frontend
+Nothing! That's the point. Hidden blocks just... aren't there. The package intercepts Umbraco's property converters and filters them out before your views even see them.
+
+## Requirements
+
+- Umbraco **17.5+** _(that's when [block actions](https://releases.umbraco.com/release/umbraco/Umbraco-CMS/17.5.0) became a thing)_ or **18.x**
+- .NET 10.0
+
+## Versions
+
+| Package Version | Umbraco Version |
+|-----------------|-----------------|
+| 18.x            | 18.0.0 - 18.x   |
+| 17.x            | 17.5.0 - 17.x   |
+
+## Advanced / Extensibility
+
+### Custom Alias
 
 Maybe `hideIt` isn't your style, or you're migrating a site that already has its own "hide this" property. Point Hide It at any alias in `appsettings.json`:
 
@@ -50,12 +71,7 @@ Maybe `hideIt` isn't your style, or you're migrating a site that already has its
 
 Both the backoffice toggle and the frontend filtering pick up the custom alias. Leave the setting out and the default `hideIt` keeps working.
 
-## How It Works
-
-### On the Frontend
-Nothing! That's the point. Hidden blocks just... aren't there. The package intercepts Umbraco's property converters and filters them out before your views even see them.
-
-### Want Manual Control?
+### Manual Filtering
 
 Don't trust the magic? Fair. Extension methods are available:
 
@@ -73,17 +89,33 @@ if (!block.IsBlockHidden())
 }
 ```
 
-## Requirements
+### Custom Block Conversion Pipeline
 
-- Umbraco **17.5+** _(that's when [block actions](https://releases.umbraco.com/release/umbraco/Umbraco-CMS/17.5.0) became a thing)_ or **18.x**
-- .NET 10.0
+If you previously replaced `BlockListPropertyValueConverter` or `BlockGridPropertyValueConverter`, switch to Hide It's filter extension points instead:
 
-## Versions
+```csharp
+using HideIt;
+using Umbraco.Cms.Core.Models.Blocks;
 
-| Package Version | Umbraco Version |
-|-----------------|-----------------|
-| 18.x            | 18.0.0 - 18.x   |
-| 17.x            | 17.5.0 - 17.x   |
+public class MyCustomBlockListFilter : IHideItBlockListFilter {
+    public BlockListModel Filter(BlockListModel model) {
+        // Your custom filtering/transformation
+        return model;
+    }
+}
+
+public class MyCustomBlockGridFilter : IHideItBlockGridFilter {
+    public BlockGridModel Filter(BlockGridModel model) {
+        // Your custom filtering/transformation
+        return model;
+    }
+}
+
+builder.Services.AddSingleton<IHideItBlockListFilter, MyCustomBlockListFilter>();
+builder.Services.AddSingleton<IHideItBlockGridFilter, MyCustomBlockGridFilter>();
+```
+
+This keeps Hide It's built-in hide logic and your custom logic in the same pipeline without chained converter `Replace<>()` calls.
 
 ## Contributing
 

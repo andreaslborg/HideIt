@@ -16,3 +16,4 @@ wwwroot/App_Plugins/HideIt/
 # OS
 .DS_Store
 Thumbs.db
+HideIt.Test/umbraco/Data/Umbraco.sqlite.db
