@@ -26,7 +26,6 @@ export class HideItHasPropertyCondition
       if (!context) {
         this.removeUmbControllerByAlias('observeSettingsElementTypeKeyForHideIt');
         this.#settingsElementTypeKey = undefined;
-        this.#scheduleEvaluation();
         return;
       }
 
@@ -62,7 +61,6 @@ export class HideItHasPropertyCondition
     const evaluationId = ++this.#evaluationId;
 
     this.removeUmbControllerByAlias('observeHideItPropertyStructure');
-    this.permitted = false;
 
     void this.#observeHideItProperty(evaluationId).catch((error: unknown) => {
       if (evaluationId !== this.#evaluationId) return;

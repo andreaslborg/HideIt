@@ -31,11 +31,18 @@ public partial class HideItSettings {
   /// </summary>
   public string PropertyAlias { get; } = DefaultPropertyAlias;
 
+  /// <summary>
+  /// Optional custom stylesheet path for block state styling.
+  /// When set, Hide It skips its default visual styling.
+  /// </summary>
+  public string? CssPath { get; }
+
   public HideItSettings() {
   }
 
-  public HideItSettings( string? propertyAlias ) {
+  public HideItSettings( string? propertyAlias, string? cssPath = null ) {
     PropertyAlias = NormalizePropertyAlias( propertyAlias );
+    CssPath = NormalizeCssPath( cssPath );
   }
 
   /// <summary>
@@ -50,6 +57,15 @@ public partial class HideItSettings {
     }
 
     return normalizedAlias;
+  }
+
+  /// <summary>
+  /// Normalizes a configured stylesheet path.
+  /// Returns null when not configured.
+  /// </summary>
+  public static string? NormalizeCssPath( string? cssPath ) {
+    string normalizedCssPath = cssPath?.Trim() ?? string.Empty;
+    return string.IsNullOrWhiteSpace( normalizedCssPath ) ? null : normalizedCssPath;
   }
 
   [System.Text.RegularExpressions.GeneratedRegex( "^[A-Za-z][A-Za-z0-9_]*$", System.Text.RegularExpressions.RegexOptions.CultureInvariant )]
