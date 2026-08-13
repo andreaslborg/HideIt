@@ -24,6 +24,7 @@ export class HideItHasPropertyCondition
 
     this.consumeContext(UMB_BLOCK_ENTRY_CONTEXT, (context) => {
       if (!context) {
+        this.removeUmbControllerByAlias('observeSettingsElementTypeKeyForHideIt');
         this.#settingsElementTypeKey = undefined;
         this.#scheduleEvaluation();
         return;
