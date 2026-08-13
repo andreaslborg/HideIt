@@ -78,7 +78,6 @@ Set `HideIt:CssPath` to your own stylesheet path in `appsettings.json`:
 ```json
 {
   "HideIt": {
-    "PropertyAlias": "hideIt",
     "CssPath": "/css/hideit-custom.css"
   }
 }
