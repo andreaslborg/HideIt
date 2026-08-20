@@ -15,6 +15,7 @@ Works with both **Block List** and **Block Grid** editors.
 - **One-Click Toggle** — Eye icon right there in the block action bar. Click it. Done.
 - **Visual Feedback** — Hidden blocks get dimmed so you know what's hiding
 - **Zero View Changes** — Hidden blocks vanish from the frontend *automagically*
+- **Search-Safe Content** — Hidden block content is excluded from Umbraco search indexing
 - **Nested Support** — BlockGrid areas? Yep, filters all the way down
 
 <img width="1220" height="874" alt="Hide It" src="https://github.com/user-attachments/assets/2ef439b4-ddc3-46ed-b751-25a90f748816" />
