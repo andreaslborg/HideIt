@@ -22,7 +22,7 @@
 
   <ItemGroup>
     <PackageReference Include="JetBrains.Annotations" Version="2026.2.0" PrivateAssets="all" />
-    <PackageReference Include="Umbraco.Cms.Api.Management" Version="[18.0.0, 19.0.0)" />
+    <PackageReference Include="Umbraco.Cms.Api.Management" Version="[18.1.1, 19.0.0)" />
     <PackageReference Include="Umbraco.Cms.Web.Common" Version="[18.1.1, 19.0.0)" />
   </ItemGroup>
 
@@ -33,21 +33,17 @@
     <None Remove="HideIt.Test\**" />
 
     <!-- Don't include the client folder as part of packaging nuget build -->
-    <Content Remove="Client\**"/>
+    <Content Remove="Client\**" />
 
     <!-- However make the umbraco-package.json included for dotnet pack or nuget package and visible to the solution -->
-    <None Include="Client\public\umbraco-package.json" Pack="false"/>
+    <None Include="Client\public\umbraco-package.json" Pack="false" />
   </ItemGroup>
 
   <ItemGroup>
     <ClientBuildInput Include="Client/package.json;Client/package-lock.json;Client/tsconfig.json;Client/vite.config.ts;Client/src/**;Client/public/**" />
   </ItemGroup>
 
-  <Target
-    Name="BuildClient"
-    Inputs="@(ClientBuildInput)"
-    Outputs="$(IntermediateOutputPath)hideit.client.stamp"
-    Condition="'$(DesignTimeBuild)' != 'true'">
+  <Target Name="BuildClient" Inputs="@(ClientBuildInput)" Outputs="$(IntermediateOutputPath)hideit.client.stamp" Condition="'$(DesignTimeBuild)' != 'true'">
     <Exec WorkingDirectory="$(MSBuildProjectDirectory)\Client" Command="npm ci" />
     <Exec WorkingDirectory="$(MSBuildProjectDirectory)\Client" Command="npm run build" />
     <Touch Files="$(IntermediateOutputPath)hideit.client.stamp" AlwaysCreate="true" />
