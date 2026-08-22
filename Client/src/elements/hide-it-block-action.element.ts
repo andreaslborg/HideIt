@@ -14,7 +14,7 @@ import {
 
 /**
  * Custom block action element for Hide It toggle.
- * Shows icon-ban when hidden, icon-eye when visible.
+ * Shows a state icon: eye-off when hidden, eye when visible.
  * Also applies a hidden/visible state marker to the parent block.
  */
 @customElement('hideit-block-action')
@@ -159,7 +159,7 @@ export class HideItBlockActionElement
   override render() {
     if (!this.manifest) return html``;
     
-    // When hidden: show eye icon (to show it), when visible: show eye-off icon (to hide it)
+    // Show the current state: eye-off when hidden, eye when visible.
     const label = this._isHidden ? 'Show block' : 'Hide block';
     
     return html`
@@ -169,9 +169,9 @@ export class HideItBlockActionElement
         label=${label}
         title=${label}
         @click=${this.#onClick}>
-        ${this._isHidden 
-          ? html`<uui-icon name="icon-eye"></uui-icon>` 
-          : this.#renderEyeOffIcon()}
+        ${this._isHidden
+          ? this.#renderEyeOffIcon()
+          : html`<uui-icon name="icon-eye"></uui-icon>`}
       </uui-button>
     `;
   }
