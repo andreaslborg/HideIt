@@ -172,9 +172,7 @@ export class HideItBlockActionElement
   }
 
   override render() {
-    if (!this.manifest) return html``;
-    
-    // When hidden: show eye icon (to show it), when visible: show eye-off icon (to hide it)
+    const actionAlias = this.manifest?.alias ?? 'HideIt.BlockAction.Toggle';
     const label = this._isHidden ? 'Show block' : 'Hide block';
     const iconName = this._isHidden ? this._hiddenIcon : this._visibleIcon;
     const fallbackIconPath = this._isHidden ? DEFAULT_HIDDEN_ICON : DEFAULT_VISIBLE_ICON;
@@ -186,9 +184,7 @@ export class HideItBlockActionElement
         label=${label}
         title=${label}
         @click=${this.#onClick}>
-        ${this._isHidden 
-          ? html`<uui-icon name="icon-eye"></uui-icon>` 
-          : this.#renderEyeOffIcon()}
+        ${this.#renderIcon(iconName, fallbackIconPath)}
       </uui-button>
     `;
   }
