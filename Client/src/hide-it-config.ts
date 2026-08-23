@@ -5,19 +5,26 @@ import type { UmbClassInterface } from '@umbraco-cms/backoffice/class-api';
  * The default property alias used when no custom alias is configured.
  */
 export const DEFAULT_HIDE_IT_ALIAS = 'hideIt';
+export const DEFAULT_VISIBLE_ICON = '/App_Plugins/HideIt/icons/eye.svg';
+export const DEFAULT_HIDDEN_ICON = '/App_Plugins/HideIt/icons/eye-off.svg';
 const SAFE_ALIAS_PATTERN = /^[A-Za-z][A-Za-z0-9_]*$/;
 const UNSAFE_ALIAS_VALUES = new Set(['__proto__', 'constructor', 'prototype']);
+const SAFE_SVG_PATH_PATTERN = /^(\/|\.\/|\.\.\/).+\.svg(?:[?#].*)?$/i;
 const CUSTOM_STYLESHEET_ID = 'hideit-custom-stylesheet';
 const CUSTOM_SHADOW_STYLESHEET_MARKER = 'hideit-custom-shadow-stylesheet';
 
 type HideItConfigurationResponse = {
   propertyAlias?: unknown;
   cssPath?: unknown;
+  visibleIcon?: unknown;
+  hiddenIcon?: unknown;
 };
 
 export type HideItConfiguration = {
   propertyAlias: string;
   cssPath: string | null;
+  visibleIcon: string;
+  hiddenIcon: string;
 };
 
 let configurationPromise: Promise<HideItConfiguration> | undefined;
@@ -25,6 +32,17 @@ let customStylesheetPath: string | null = null;
 let customShadowStylesheetPath: string | null = null;
 let customShadowCssPromise: Promise<string> | undefined;
 let customShadowConstructedStylesheetPromise: Promise<CSSStyleSheet> | undefined;
+const CONFIG_FETCH_RETRIES = 5;
+const CONFIG_FETCH_RETRY_DELAY_MS = 250;
+
+function getDefaultConfiguration(): HideItConfiguration {
+  return {
+    propertyAlias: DEFAULT_HIDE_IT_ALIAS,
+    cssPath: null,
+    visibleIcon: DEFAULT_VISIBLE_ICON,
+    hiddenIcon: DEFAULT_HIDDEN_ICON,
+  };
+}
 
 /**
  * Resolves the property alias used to hide blocks.
@@ -36,10 +54,11 @@ export function getHideItPropertyAlias(host: UmbClassInterface): Promise<string>
 }
 
 export function getHideItConfiguration(host: UmbClassInterface): Promise<HideItConfiguration> {
-  configurationPromise ??= fetchConfiguration(host).catch(() => ({
-    propertyAlias: DEFAULT_HIDE_IT_ALIAS,
-    cssPath: null,
-  }));
+  configurationPromise ??= fetchConfigurationWithRetry(host).catch((error) => {
+    console.error('[HideIt] Error fetching configuration:', error);
+    configurationPromise = undefined;
+    return getDefaultConfiguration();
+  });
 
   return configurationPromise;
 }
@@ -93,9 +112,17 @@ export async function applyHideItCustomShadowStylesheet(
 async function fetchConfiguration(host: UmbClassInterface): Promise<HideItConfiguration> {
   const authContext = await host.getContext(UMB_AUTH_CONTEXT);
   if (!authContext) {
+    const response = await fetch('/umbraco/management/api/v1/hideit/configuration', { credentials: 'same-origin' });
+    if (!response.ok) {
+      throw new Error(`Failed to load HideIt configuration (${response.status})`);
+    }
+
+    const data = (await response.json()) as HideItConfigurationResponse;
     return {
-      propertyAlias: DEFAULT_HIDE_IT_ALIAS,
-      cssPath: null,
+      propertyAlias: normalizeAlias(data.propertyAlias),
+      cssPath: normalizeCssPath(data.cssPath),
+      visibleIcon: normalizeIconName(data.visibleIcon, DEFAULT_VISIBLE_ICON),
+      hiddenIcon: normalizeIconName(data.hiddenIcon, DEFAULT_HIDDEN_ICON),
     };
   }
 
@@ -108,24 +135,41 @@ async function fetchConfiguration(host: UmbClassInterface): Promise<HideItConfig
     });
 
     if (!response.ok) {
-      return {
-        propertyAlias: DEFAULT_HIDE_IT_ALIAS,
-        cssPath: null,
-      };
+      throw new Error(`Failed to load HideIt configuration (${response.status})`);
     }
 
     const data = (await response.json()) as HideItConfigurationResponse;
     return {
       propertyAlias: normalizeAlias(data.propertyAlias),
       cssPath: normalizeCssPath(data.cssPath),
+      visibleIcon: normalizeIconName(data.visibleIcon, DEFAULT_VISIBLE_ICON),
+      hiddenIcon: normalizeIconName(data.hiddenIcon, DEFAULT_HIDDEN_ICON),
     };
   } catch (error) {
-    console.error('[HideIt] Error fetching configuration:', error);
-    return {
-      propertyAlias: DEFAULT_HIDE_IT_ALIAS,
-      cssPath: null,
-    };
+    throw error;
   }
+}
+
+async function fetchConfigurationWithRetry(host: UmbClassInterface): Promise<HideItConfiguration> {
+  let lastError: unknown;
+  for (let attempt = 0; attempt < CONFIG_FETCH_RETRIES; attempt += 1) {
+    try {
+      return await fetchConfiguration(host);
+    } catch (error) {
+      lastError = error;
+      if (attempt < CONFIG_FETCH_RETRIES - 1) {
+        await delay(CONFIG_FETCH_RETRY_DELAY_MS);
+      }
+    }
+  }
+
+  throw lastError instanceof Error ? lastError : new Error('Failed to fetch HideIt configuration.');
+}
+
+function delay(ms: number): Promise<void> {
+  return new Promise((resolve) => {
+    window.setTimeout(resolve, ms);
+  });
 }
 
 function normalizeAlias(alias: unknown): string {
@@ -140,6 +184,11 @@ function normalizeAlias(alias: unknown): string {
 function normalizeCssPath(cssPath: unknown): string | null {
   const value = typeof cssPath === 'string' ? cssPath.trim() : '';
   return value.length > 0 ? value : null;
+}
+
+function normalizeIconName(iconName: unknown, fallback: string): string {
+  const value = typeof iconName === 'string' ? iconName.trim() : '';
+  return SAFE_SVG_PATH_PATTERN.test(value) ? value : fallback;
 }
 
 function resetCustomShadowStylesheetCacheIfPathChanged(normalizedCssPath: string): void {
