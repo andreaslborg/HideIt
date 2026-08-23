@@ -26,6 +26,16 @@ public partial class HideItSettings {
   public const string DefaultPropertyAlias = "hideIt";
 
   /// <summary>
+  /// The default icon shown when a block is visible.
+  /// </summary>
+  public const string DefaultVisibleIcon = "/App_Plugins/HideIt/icons/eye.svg";
+
+  /// <summary>
+  /// The default icon shown when a block is hidden.
+  /// </summary>
+  public const string DefaultHiddenIcon = "/App_Plugins/HideIt/icons/eye-off.svg";
+
+  /// <summary>
   /// The property alias used to determine if a block should be hidden.
   /// Defaults to "hideIt".
   /// </summary>
@@ -37,12 +47,24 @@ public partial class HideItSettings {
   /// </summary>
   public string? CssPath { get; }
 
+  /// <summary>
+  /// The icon shown when a block is visible.
+  /// </summary>
+  public string VisibleIcon { get; } = DefaultVisibleIcon;
+
+  /// <summary>
+  /// The icon shown when a block is hidden.
+  /// </summary>
+  public string HiddenIcon { get; } = DefaultHiddenIcon;
+
   public HideItSettings() {
   }
 
-  public HideItSettings( string? propertyAlias, string? cssPath = null ) {
+  public HideItSettings( string? propertyAlias, string? cssPath = null, string? visibleIcon = null, string? hiddenIcon = null ) {
     PropertyAlias = NormalizePropertyAlias( propertyAlias );
     CssPath = NormalizeCssPath( cssPath );
+    VisibleIcon = NormalizeIconPath( visibleIcon, DefaultVisibleIcon );
+    HiddenIcon = NormalizeIconPath( hiddenIcon, DefaultHiddenIcon );
   }
 
   /// <summary>
@@ -68,6 +90,18 @@ public partial class HideItSettings {
     return string.IsNullOrWhiteSpace( normalizedCssPath ) ? null : normalizedCssPath;
   }
 
+  /// <summary>
+  /// Normalizes a configured icon path.
+  /// Falls back to the provided default when missing or invalid.
+  /// </summary>
+  public static string NormalizeIconPath( string? iconPath, string defaultValue ) {
+    string normalizedIconPath = iconPath?.Trim() ?? string.Empty;
+    return IconPathRegex().IsMatch( normalizedIconPath ) ? normalizedIconPath : defaultValue;
+  }
+
   [System.Text.RegularExpressions.GeneratedRegex( "^[A-Za-z][A-Za-z0-9_]*$", System.Text.RegularExpressions.RegexOptions.CultureInvariant )]
   private static partial System.Text.RegularExpressions.Regex MyRegex();
+
+  [System.Text.RegularExpressions.GeneratedRegex( @"^(\/|\.\/|\.\.\/).+\.svg([?#].*)?$", System.Text.RegularExpressions.RegexOptions.CultureInvariant | System.Text.RegularExpressions.RegexOptions.IgnoreCase )]
+  private static partial System.Text.RegularExpressions.Regex IconPathRegex();
 }

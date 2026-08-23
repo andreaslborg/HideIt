@@ -26,7 +26,9 @@ public class HideItComposer : IComposer {
       // Read and normalize alias from configuration once, then register immutable settings.
       string? configuredAlias = builder.Config.GetSection( HideItSettings.SectionName )["PropertyAlias"];
       string? configuredCssPath = builder.Config.GetSection( HideItSettings.SectionName )["CssPath"];
-      HideItSettings settings = new( configuredAlias, configuredCssPath );
+      string? configuredVisibleIcon = builder.Config.GetSection( HideItSettings.SectionName )["VisibleIcon"];
+      string? configuredHiddenIcon = builder.Config.GetSection( HideItSettings.SectionName )["HiddenIcon"];
+      HideItSettings settings = new( configuredAlias, configuredCssPath, configuredVisibleIcon, configuredHiddenIcon );
 
       builder.Services.AddSingleton( Options.Create( settings ) );
       builder.Services.AddSingleton<IHideItBlockListFilter, HideItVisibilityBlockListFilter>();
