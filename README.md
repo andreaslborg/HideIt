@@ -94,6 +94,23 @@ Hide It adds these state markers on each block entry:
 
 Use those selectors in your CSS to style hidden/visible blocks exactly how you want.
 
+### Custom Action Icons
+
+You can override the action icon for both states in `appsettings.json`:
+
+```json
+{
+  "HideIt": {
+    "VisibleIcon": "/icons/power.svg",
+    "HiddenIcon": "/icons/power-off.svg"
+  }
+}
+```
+
+- `VisibleIcon` controls the icon shown when the block is currently visible.
+- `HiddenIcon` controls the icon shown when the block is currently hidden.
+- Values must be SVG paths (for example `/icons/power.svg`).
+
 ### Manual Filtering
 
 Don't trust the magic? Fair. Extension methods are available:

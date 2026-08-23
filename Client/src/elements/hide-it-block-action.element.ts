@@ -7,14 +7,18 @@ import { css, customElement, html, property, state } from '@umbraco-cms/backoffi
 import { UmbActionExecutedEvent } from '@umbraco-cms/backoffice/event';
 import { UmbLitElement } from '@umbraco-cms/backoffice/lit-element';
 import {
+  DEFAULT_HIDDEN_ICON,
+  DEFAULT_VISIBLE_ICON,
   applyHideItCustomShadowStylesheet,
   ensureHideItCustomStylesheet,
   getHideItConfiguration
 } from '../hide-it-config.js';
 
+const SVG_FILE_PATTERN = /\.svg(?:[?#].*)?$/i;
+
 /**
  * Custom block action element for Hide It toggle.
- * Shows icon-ban when hidden, icon-eye when visible.
+ * Shows a state icon: hidden icon when hidden, visible icon when visible.
  * Also applies a hidden/visible state marker to the parent block.
  */
 @customElement('hideit-block-action')
@@ -29,6 +33,7 @@ export class HideItBlockActionElement
 
   public set api(api: UmbBlockAction<MetaBlockActionDefaultKind> | undefined) {
     this.#api = api;
+    this.requestUpdate();
   }
 
   @state()
@@ -36,6 +41,10 @@ export class HideItBlockActionElement
   private _useDefaultStyling = true;
   private _hasAppliedVisualState = false;
   private _customCssPath: string | null = null;
+  @state()
+  private _visibleIcon = DEFAULT_VISIBLE_ICON;
+  @state()
+  private _hiddenIcon = DEFAULT_HIDDEN_ICON;
 
   constructor() {
     super();
@@ -49,7 +58,10 @@ export class HideItBlockActionElement
       const configuration = await getHideItConfiguration(this);
       const alias = configuration.propertyAlias;
       this._customCssPath = configuration.cssPath;
+      this._visibleIcon = configuration.visibleIcon;
+      this._hiddenIcon = configuration.hiddenIcon;
       this._useDefaultStyling = this._customCssPath === null;
+      this.requestUpdate();
 
       if (this._customCssPath !== null) {
         ensureHideItCustomStylesheet(this._customCssPath);
@@ -144,34 +156,35 @@ export class HideItBlockActionElement
     }
   }
 
-  // Inline SVG for eye-off icon (not available in Umbraco icon registry)
-  #renderEyeOffIcon() {
-    return html`
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" class="eye-off-icon">
-        <path d="M10.733 5.076a10.744 10.744 0 0 1 11.205 6.575 1 1 0 0 1 0 .696 10.747 10.747 0 0 1-1.444 2.49"/>
-        <path d="M14.084 14.158a3 3 0 0 1-4.242-4.242"/>
-        <path d="M17.479 17.499a10.75 10.75 0 0 1-15.417-5.151 1 1 0 0 1 0-.696 10.75 10.75 0 0 1 4.446-5.143"/>
-        <path d="m2 2 20 20"/>
-      </svg>
-    `;
+  #isSvgIconPath(iconName: string): boolean {
+    const value = iconName.trim();
+    if (!SVG_FILE_PATTERN.test(value)) {
+      return false;
+    }
+
+    return value.startsWith('/') || value.startsWith('./') || value.startsWith('../');
+  }
+
+  #renderIcon(iconPath: string, fallbackIconPath: string) {
+    const normalizedIconPath = iconPath.trim();
+    const resolvedIconPath = this.#isSvgIconPath(normalizedIconPath) ? normalizedIconPath : fallbackIconPath;
+    return html`<img src=${resolvedIconPath} alt="" aria-hidden="true" class="hideit-icon-image">`;
   }
 
   override render() {
-    if (!this.manifest) return html``;
-    
-    // When hidden: show eye icon (to show it), when visible: show eye-off icon (to hide it)
+    const actionAlias = this.manifest?.alias ?? 'HideIt.BlockAction.Toggle';
     const label = this._isHidden ? 'Show block' : 'Hide block';
+    const iconName = this._isHidden ? this._hiddenIcon : this._visibleIcon;
+    const fallbackIconPath = this._isHidden ? DEFAULT_HIDDEN_ICON : DEFAULT_VISIBLE_ICON;
     
     return html`
       <uui-button
-        data-mark="block-action:${this.manifest.alias}"
+        data-mark="block-action:${actionAlias}"
         look="secondary"
         label=${label}
         title=${label}
         @click=${this.#onClick}>
-        ${this._isHidden 
-          ? html`<uui-icon name="icon-eye"></uui-icon>` 
-          : this.#renderEyeOffIcon()}
+        ${this.#renderIcon(iconName, fallbackIconPath)}
       </uui-button>
     `;
   }
@@ -190,10 +203,11 @@ export class HideItBlockActionElement
         --uui-button-padding-right-factor: var(--umb-button-padding-right-factor);
       }
 
-      /* Match uui-icon sizing */
-      .eye-off-icon {
+      .hideit-icon-image {
         width: 1.1em;
         height: 1.1em;
+        display: inline-block;
+        object-fit: contain;
         vertical-align: middle;
       }
     `,
