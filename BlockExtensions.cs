@@ -34,12 +34,29 @@ public static class BlockExtensions {
   /// <param name="blocks">The block list model to filter.</param>
   /// <returns>A new BlockListModel containing only visible blocks.</returns>
   public static BlockListModel WhereVisible( this BlockListModel? blocks ) {
-    if ( blocks == null || !blocks.Any() ) {
+    if ( blocks == null || blocks.Count == 0 ) {
       return BlockListModel.Empty;
     }
 
-    List<BlockListItem> visibleBlocks = blocks.Where( block => !IsHidden( block.Settings ) ).ToList();
-    return new BlockListModel( visibleBlocks );
+    List<BlockListItem>? visibleBlocks = null;
+    for ( int index = 0; index < blocks.Count; index++ ) {
+      BlockListItem block = blocks[ index ];
+      if ( !IsHidden( block.Settings ) ) {
+        visibleBlocks?.Add( block );
+        continue;
+      }
+
+      if ( visibleBlocks is not null ) {
+        continue;
+      }
+
+      visibleBlocks = new List<BlockListItem>( blocks.Count - 1 );
+      for ( int visibleIndex = 0; visibleIndex < index; visibleIndex++ ) {
+        visibleBlocks.Add( blocks[ visibleIndex ] );
+      }
+    }
+
+    return visibleBlocks == null ? blocks : new BlockListModel( visibleBlocks );
   }
 
   /// <summary>
@@ -48,16 +65,29 @@ public static class BlockExtensions {
   /// <param name="blocks">The block grid model to filter.</param>
   /// <returns>A new BlockGridModel containing only visible blocks.</returns>
   public static BlockGridModel WhereVisible( this BlockGridModel? blocks ) {
-    if ( blocks == null || !blocks.Any() ) {
+    if ( blocks == null || blocks.Count == 0 ) {
       return BlockGridModel.Empty;
     }
 
-    List<BlockGridItem> visibleBlocks = blocks
-        .Where( block => !IsHidden( block.Settings ) )
-        .Select( FilterBlockGridItemAreas )
-        .ToList();
+    List<BlockGridItem>? visibleBlocks = null;
+    for ( int index = 0; index < blocks.Count; index++ ) {
+      BlockGridItem block = blocks[ index ];
+      if ( !IsHidden( block.Settings ) ) {
+        visibleBlocks?.Add( FilterBlockGridItemAreas( block ) );
+        continue;
+      }
 
-    return new BlockGridModel( visibleBlocks, blocks.GridColumns );
+      if ( visibleBlocks is not null ) {
+        continue;
+      }
+
+      visibleBlocks = new List<BlockGridItem>( blocks.Count - 1 );
+      for ( int visibleIndex = 0; visibleIndex < index; visibleIndex++ ) {
+        visibleBlocks.Add( FilterBlockGridItemAreas( blocks[ visibleIndex ] ) );
+      }
+    }
+
+    return visibleBlocks == null ? blocks : new BlockGridModel( visibleBlocks, blocks.GridColumns );
   }
 
   /// <summary>
