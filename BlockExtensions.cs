@@ -25,6 +25,7 @@ public static class BlockExtensions {
     if ( string.IsNullOrWhiteSpace( alias ) ) {
       return;
     }
+
     _hideItPropertyAlias = alias;
   }
 
@@ -40,7 +41,7 @@ public static class BlockExtensions {
 
     List<BlockListItem>? visibleBlocks = null;
     for ( int index = 0; index < blocks.Count; index++ ) {
-      BlockListItem block = blocks[ index ];
+      BlockListItem block = blocks[index];
       if ( !IsHidden( block.Settings ) ) {
         visibleBlocks?.Add( block );
         continue;
@@ -52,7 +53,7 @@ public static class BlockExtensions {
 
       visibleBlocks = new List<BlockListItem>( blocks.Count - 1 );
       for ( int visibleIndex = 0; visibleIndex < index; visibleIndex++ ) {
-        visibleBlocks.Add( blocks[ visibleIndex ] );
+        visibleBlocks.Add( blocks[visibleIndex] );
       }
     }
 
@@ -71,20 +72,30 @@ public static class BlockExtensions {
 
     List<BlockGridItem>? visibleBlocks = null;
     for ( int index = 0; index < blocks.Count; index++ ) {
-      BlockGridItem block = blocks[ index ];
-      if ( !IsHidden( block.Settings ) ) {
-        visibleBlocks?.Add( FilterBlockGridItemAreas( block ) );
+      BlockGridItem block = blocks[index];
+
+      if ( IsHidden( block.Settings ) ) {
+        if ( visibleBlocks is null ) {
+          visibleBlocks = new List<BlockGridItem>( blocks.Count - 1 );
+          for ( int previousIndex = 0; previousIndex < index; previousIndex++ ) {
+            visibleBlocks.Add( blocks[previousIndex] );
+          }
+        }
+
         continue;
       }
 
-      if ( visibleBlocks is not null ) {
-        continue;
+      // Nested blocks in areas must always be checked for hidden items, regardless of
+      // whether this top-level block is visible, so areaChanged can force allocation.
+      BlockGridItem filteredBlock = FilterBlockGridItemAreas( block, out bool areaChanged );
+      if ( areaChanged && visibleBlocks is null ) {
+        visibleBlocks = new List<BlockGridItem>( blocks.Count );
+        for ( int previousIndex = 0; previousIndex < index; previousIndex++ ) {
+          visibleBlocks.Add( blocks[previousIndex] );
+        }
       }
 
-      visibleBlocks = new List<BlockGridItem>( blocks.Count - 1 );
-      for ( int visibleIndex = 0; visibleIndex < index; visibleIndex++ ) {
-        visibleBlocks.Add( FilterBlockGridItemAreas( blocks[ visibleIndex ] ) );
-      }
+      visibleBlocks?.Add( filteredBlock );
     }
 
     return visibleBlocks == null ? blocks : new BlockGridModel( visibleBlocks, blocks.GridColumns );
@@ -96,8 +107,8 @@ public static class BlockExtensions {
   /// <param name="block">The block item to check.</param>
   /// <returns>True if the block is hidden, false otherwise.</returns>
   public static bool IsBlockHidden<TContent, TSettings>( this IBlockReference<TContent, TSettings> block )
-      where TContent : IPublishedElement
-      where TSettings : IPublishedElement {
+    where TContent : IPublishedElement
+    where TSettings : IPublishedElement {
     return IsHidden( block.Settings );
   }
 
@@ -116,31 +127,99 @@ public static class BlockExtensions {
     };
   }
 
-  private static BlockGridItem FilterBlockGridItemAreas( BlockGridItem item ) {
-    // Filter areas recursively
-    List<BlockGridArea> filteredAreas = item.Areas
-        .Select( area => new BlockGridArea(
-            area.Where( areaItem => !IsHidden( areaItem.Settings ) )
-                .Select( FilterBlockGridItemAreas )
-                .ToList(),
-            area.Alias,
-            area.RowSpan,
-            area.ColumnSpan ) )
-        .ToList();
+  /// <summary>
+  /// Recursively filters hidden blocks out of an item's nested areas.
+  /// </summary>
+  /// <param name="item">The block grid item whose areas should be filtered.</param>
+  /// <param name="changed">True if any nested block was removed or altered; otherwise false.</param>
+  /// <returns>The original item if nothing changed, or a new item with filtered areas.</returns>
+  private static BlockGridItem FilterBlockGridItemAreas( BlockGridItem item, out bool changed ) {
+    changed = false;
 
-    // Create a new item with filtered areas
-    BlockGridItem newItem = new(
-        item.ContentKey,
-        item.Content,
-        item.SettingsKey,
-        item.Settings ) {
+    // Areas is typed as IEnumerable<BlockGridArea>, but is backed by an indexable
+    // collection (an empty array by default). Avoid materializing a new list unless
+    // it genuinely isn't already indexable.
+    IReadOnlyList<BlockGridArea> areas = item.Areas as IReadOnlyList<BlockGridArea> ?? item.Areas.ToList();
+    if ( areas.Count == 0 ) {
+      return item;
+    }
+
+    List<BlockGridArea>? filteredAreas = null;
+    for ( int index = 0; index < areas.Count; index++ ) {
+      BlockGridArea area = areas[index];
+      BlockGridArea filteredArea = FilterBlockGridArea( area, out bool areaChanged );
+
+      if ( areaChanged && filteredAreas is null ) {
+        filteredAreas = new List<BlockGridArea>( areas.Count );
+        for ( int previousIndex = 0; previousIndex < index; previousIndex++ ) {
+          filteredAreas.Add( areas[previousIndex] );
+        }
+      }
+
+      filteredAreas?.Add( filteredArea );
+    }
+
+    if ( filteredAreas is null ) {
+      return item;
+    }
+
+    changed = true;
+    return new BlockGridItem(
+      item.ContentKey,
+      item.Content,
+      item.SettingsKey,
+      item.Settings ) {
       RowSpan = item.RowSpan,
       ColumnSpan = item.ColumnSpan,
       AreaGridColumns = item.AreaGridColumns,
       GridColumns = item.GridColumns,
       Areas = filteredAreas
     };
+  }
 
-    return newItem;
+  /// <summary>
+  /// Filters hidden blocks out of a single area, recursing into each item's own nested areas.
+  /// </summary>
+  /// <param name="area">The area to filter.</param>
+  /// <param name="changed">True if any item was removed or altered; otherwise false.</param>
+  /// <returns>The original area if nothing changed, or a new area with filtered items.</returns>
+  private static BlockGridArea FilterBlockGridArea( BlockGridArea area, out bool changed ) {
+    changed = false;
+    if ( area.Count == 0 ) {
+      return area;
+    }
+
+    List<BlockGridItem>? filteredItems = null;
+    for ( int index = 0; index < area.Count; index++ ) {
+      BlockGridItem areaItem = area[index];
+
+      if ( IsHidden( areaItem.Settings ) ) {
+        if ( filteredItems is null ) {
+          filteredItems = new List<BlockGridItem>( area.Count - 1 );
+          for ( int previousIndex = 0; previousIndex < index; previousIndex++ ) {
+            filteredItems.Add( area[previousIndex] );
+          }
+        }
+
+        continue;
+      }
+
+      BlockGridItem filteredItem = FilterBlockGridItemAreas( areaItem, out bool itemChanged );
+      if ( itemChanged && filteredItems is null ) {
+        filteredItems = new List<BlockGridItem>( area.Count );
+        for ( int previousIndex = 0; previousIndex < index; previousIndex++ ) {
+          filteredItems.Add( area[previousIndex] );
+        }
+      }
+
+      filteredItems?.Add( filteredItem );
+    }
+
+    if ( filteredItems is null ) {
+      return area;
+    }
+
+    changed = true;
+    return new BlockGridArea( filteredItems, area.Alias, area.RowSpan, area.ColumnSpan );
   }
 }
