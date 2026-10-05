@@ -11,7 +11,8 @@ import {
   DEFAULT_VISIBLE_ICON,
   applyHideItCustomShadowStylesheet,
   ensureHideItCustomStylesheet,
-  getHideItConfiguration
+  getHideItConfiguration,
+  getHideItIconMarkup
 } from '../hide-it-config.js';
 
 const SVG_FILE_PATTERN = /\.svg(?:[?#].*)?$/i;
@@ -45,6 +46,9 @@ export class HideItBlockActionElement
   private _visibleIcon = DEFAULT_VISIBLE_ICON;
   @state()
   private _hiddenIcon = DEFAULT_HIDDEN_ICON;
+  @state()
+  private _iconMarkup: string | null = null;
+  #iconRequestToken = 0;
 
   constructor() {
     super();
@@ -165,18 +169,45 @@ export class HideItBlockActionElement
     return value.startsWith('/') || value.startsWith('./') || value.startsWith('../');
   }
 
-  #renderIcon(iconPath: string, fallbackIconPath: string) {
-    const normalizedIconPath = iconPath.trim();
-    const resolvedIconPath = this.#isSvgIconPath(normalizedIconPath) ? normalizedIconPath : fallbackIconPath;
-    return html`<img src=${resolvedIconPath} alt="" aria-hidden="true" class="hideit-icon-image">`;
+  protected override updated(changedProperties: Map<string, unknown>): void {
+    super.updated(changedProperties);
+    if (changedProperties.has('_isHidden') || changedProperties.has('_visibleIcon') || changedProperties.has('_hiddenIcon')) {
+      void this.#loadIcon();
+    }
+  }
+
+  async #loadIcon(): Promise<void> {
+    const normalizedIconPath = (this._isHidden ? this._hiddenIcon : this._visibleIcon).trim();
+    const fallbackIconPath = this._isHidden ? DEFAULT_HIDDEN_ICON : DEFAULT_VISIBLE_ICON;
+    const iconPath = this.#isSvgIconPath(normalizedIconPath) ? normalizedIconPath : fallbackIconPath;
+    const requestToken = ++this.#iconRequestToken;
+
+    try {
+      const markup = await getHideItIconMarkup(iconPath);
+      if (requestToken === this.#iconRequestToken) {
+        this._iconMarkup = markup;
+      }
+    } catch (error) {
+      console.error('[HideIt] Error loading icon:', error);
+      if (iconPath === fallbackIconPath) {
+        return;
+      }
+
+      try {
+        const fallbackMarkup = await getHideItIconMarkup(fallbackIconPath);
+        if (requestToken === this.#iconRequestToken) {
+          this._iconMarkup = fallbackMarkup;
+        }
+      } catch (fallbackError) {
+        console.error('[HideIt] Error loading fallback icon:', fallbackError);
+      }
+    }
   }
 
   override render() {
     const actionAlias = this.manifest?.alias ?? 'HideIt.BlockAction.Toggle';
     const label = this._isHidden ? 'Show block' : 'Hide block';
-    const iconName = this._isHidden ? this._hiddenIcon : this._visibleIcon;
-    const fallbackIconPath = this._isHidden ? DEFAULT_HIDDEN_ICON : DEFAULT_VISIBLE_ICON;
-    
+
     return html`
       <uui-button
         data-mark="block-action:${actionAlias}"
@@ -184,7 +215,7 @@ export class HideItBlockActionElement
         label=${label}
         title=${label}
         @click=${this.#onClick}>
-        ${this.#renderIcon(iconName, fallbackIconPath)}
+        <uui-icon class="hideit-icon-image" .svg=${this._iconMarkup} label=""></uui-icon>
       </uui-button>
     `;
   }
@@ -206,8 +237,6 @@ export class HideItBlockActionElement
       .hideit-icon-image {
         width: 1.1em;
         height: 1.1em;
-        display: inline-block;
-        object-fit: contain;
         vertical-align: middle;
       }
     `,

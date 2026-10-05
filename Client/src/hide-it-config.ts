@@ -1,5 +1,6 @@
 import { UMB_AUTH_CONTEXT } from '@umbraco-cms/backoffice/auth';
 import type { UmbClassInterface } from '@umbraco-cms/backoffice/class-api';
+import { DOMPurify } from '@umbraco-cms/backoffice/external/dompurify';
 
 /**
  * The default property alias used when no custom alias is configured.
@@ -32,6 +33,7 @@ let customStylesheetPath: string | null = null;
 let customShadowStylesheetPath: string | null = null;
 let customShadowCssPromise: Promise<string> | undefined;
 let customShadowConstructedStylesheetPromise: Promise<CSSStyleSheet> | undefined;
+const iconMarkupCache = new Map<string, Promise<string>>();
 const CONFIG_FETCH_RETRIES = 5;
 const CONFIG_FETCH_RETRY_DELAY_MS = 250;
 
@@ -61,6 +63,36 @@ export function getHideItConfiguration(host: UmbClassInterface): Promise<HideItC
   });
 
   return configurationPromise;
+}
+
+/**
+ * Fetches and sanitizes the SVG markup for a Hide It icon path, so it can be rendered inline
+ * (e.g. via `uui-icon`'s `.svg` property) instead of loaded as an `<img>`. Inlining is required
+ * for the icon's `stroke="currentColor"` to inherit the backoffice's theme-aware text color -
+ * an `<img src>` renders the SVG in an isolated context where `currentColor` is always black.
+ * Results are cached per path so repeated blocks share a single fetch and sanitization pass.
+ */
+export function getHideItIconMarkup(iconPath: string): Promise<string> {
+  let cached = iconMarkupCache.get(iconPath);
+  if (!cached) {
+    cached = fetchIconMarkup(iconPath).catch((error) => {
+      iconMarkupCache.delete(iconPath);
+      throw error;
+    });
+    iconMarkupCache.set(iconPath, cached);
+  }
+
+  return cached;
+}
+
+async function fetchIconMarkup(iconPath: string): Promise<string> {
+  const response = await fetch(iconPath, { credentials: 'same-origin' });
+  if (!response.ok) {
+    throw new Error(`Failed to load icon "${iconPath}" (${response.status})`);
+  }
+
+  const rawSvg = await response.text();
+  return DOMPurify.sanitize(rawSvg, { USE_PROFILES: { svg: true, svgFilters: true } });
 }
 
 export function ensureHideItCustomStylesheet(cssPath: string): void {
