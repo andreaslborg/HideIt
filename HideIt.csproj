@@ -17,8 +17,13 @@
     <PackageTags>umbraco;umbraco-marketplace;block;visibility;hide;toggle</PackageTags>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/andreaslborg/HideIt</PackageProjectUrl>
+    <PackageReadmeFile>README.nuget.md</PackageReadmeFile>
     <Version>0.0.0-dev</Version>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="README.nuget.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="JetBrains.Annotations" Version="2026.2.0" PrivateAssets="all" />
