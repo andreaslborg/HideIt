@@ -8,11 +8,11 @@ Hide It adds block-level visibility control to Umbraco, letting editors toggle b
 
 ## Features
 
-- **One-click toggle** — An eye icon in the block action bar switches a block between visible and hidden
-- **Visual feedback** — Hidden blocks are visually dimmed in the backoffice
-- **No view changes required** — Hidden blocks are automatically excluded from frontend rendering
-- **Search-safe** — Hidden block content is excluded from Umbraco search indexing
-- **Nested support** — Filtering applies recursively within Block Grid areas
+- **One-click toggle**: An eye icon in the block action bar switches a block between visible and hidden
+- **Visual feedback**: Hidden blocks are visually dimmed in the backoffice
+- **No view changes required**: Hidden blocks are automatically excluded from frontend rendering
+- **Search-safe**: Hidden block content is excluded from Umbraco search indexing
+- **Nested support**: Filtering applies recursively within Block Grid areas
 
 <img width="1220" height="874" alt="Hide It" src="https://github.com/user-attachments/assets/2ef439b4-ddc3-46ed-b751-25a90f748816" />
 

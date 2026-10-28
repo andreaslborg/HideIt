@@ -4,11 +4,11 @@ Hide It adds block-level visibility control to Umbraco, letting editors toggle b
 
 ## Features
 
-- **One-click toggle** — An eye icon in the block action bar switches a block between visible and hidden
-- **Visual feedback** — Hidden blocks are visually dimmed in the backoffice
-- **No view changes required** — Hidden blocks are automatically excluded from frontend rendering
-- **Search-safe** — Hidden block content is excluded from Umbraco search indexing
-- **Nested support** — Filtering applies recursively within Block Grid areas
+- **One-click toggle**: An eye icon in the block action bar switches a block between visible and hidden
+- **Visual feedback**: Hidden blocks are visually dimmed in the backoffice
+- **No view changes required**: Hidden blocks are automatically excluded from frontend rendering
+- **Search-safe**: Hidden block content is excluded from Umbraco search indexing
+- **Nested support**: Filtering applies recursively within Block Grid areas
 
 ## Installation
 
