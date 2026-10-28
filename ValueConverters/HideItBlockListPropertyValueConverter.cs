@@ -9,6 +9,7 @@ using Umbraco.Cms.Core.Models.Blocks;
 using Umbraco.Cms.Core.Models.PublishedContent;
 using Umbraco.Cms.Core.PropertyEditors;
 using Umbraco.Cms.Core.PropertyEditors.ValueConverters;
+using Umbraco.Cms.Core.PublishedCache;
 using Umbraco.Cms.Core.Serialization;
 using Umbraco.Cms.Core.Services;
 
@@ -33,8 +34,9 @@ public class HideItBlockListPropertyValueConverter : BlockListPropertyValueConve
       BlockEditorVarianceHandler blockEditorVarianceHandler,
       ILanguageService languageService,
       IPropertyRenderingContextAccessor propertyRenderingContextAccessor,
+      IElementCacheService elementCacheService,
       IEnumerable<IHideItBlockListFilter> filters )
-      : base( proflog, blockConverter, contentTypeService, apiElementBuilder, jsonSerializer, constructorCache, variationContextAccessor, blockEditorVarianceHandler, languageService, propertyRenderingContextAccessor ) {
+      : base( proflog, blockConverter, contentTypeService, apiElementBuilder, jsonSerializer, constructorCache, variationContextAccessor, blockEditorVarianceHandler, languageService, propertyRenderingContextAccessor, elementCacheService ) {
     _filters = filters.ToArray();
   }
 
