@@ -46,15 +46,18 @@ Nothing! That's the point. Hidden blocks just... aren't there. The package inter
 
 ## Requirements
 
-- Umbraco **17.5+** _(that's when [block actions](https://releases.umbraco.com/release/umbraco/Umbraco-CMS/17.5.0) became a thing)_ or **18.x**
-- .NET 10.0
+- Umbraco **17.5+** _(that's when [block actions](https://releases.umbraco.com/release/umbraco/Umbraco-CMS/17.5.0) became a thing)_, **18.x**, or **19.x** (pre-release)
+- .NET 10.0 (.NET 11 for Umbraco 19)
 
 ## Versions
 
-| Package Version | Umbraco Version |
-|-----------------|-----------------|
-| 18.x            | 18.0.0 - 18.x   |
-| 17.x            | 17.5.0 - 17.x   |
+| Package Version        | Umbraco Version    |
+|-------------------------|---------------------|
+| 19.x _(pre-release)_   | 19.0.0-beta1+       |
+| 18.x                    | 18.0.0 - 18.x       |
+| 17.x                    | 17.5.0 - 17.x       |
+
+> **Note:** `19.x` tracks Umbraco 19, which is currently in **beta**. These releases are published as GitHub/NuGet pre-releases and may contain breaking changes until Umbraco 19 reaches a stable (GA) release.
 
 ## Advanced / Extensibility
 
@@ -161,7 +164,7 @@ This keeps Hide It's built-in hide logic and your custom logic in the same pipel
 
 ### Local Umbraco test site
 
-An in-repo Umbraco 18 site is available under `HideIt.Test`.
+An in-repo Umbraco 19 (pre-release) site is available under `HideIt.Test`.
 
 - Open `HideIt.slnx`
 - Start `HideIt.Test` with **IIS Express** or the **Umbraco.Web.UI** profile
