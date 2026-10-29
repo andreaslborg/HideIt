@@ -4,22 +4,17 @@
 [![NuGet Version](https://img.shields.io/nuget/v/Our.Umbraco.HideIt.svg)](https://www.nuget.org/packages/Our.Umbraco.HideIt)
 [![NuGet Downloads](https://img.shields.io/nuget/dt/Our.Umbraco.HideIt.svg)](https://www.nuget.org/packages/Our.Umbraco.HideIt)
 
-**The "now you see me, now you don't" package for Umbraco Block List and Block Grid!**
+Hide It adds block-level visibility control to Umbraco, letting editors toggle blocks on or off without deleting them. It works with both **Block List** and **Block Grid** editors, and requires no changes to your views.
 
-Ever wanted to temporarily hide a block without deleting it? Maybe it's a seasonal promo, a work-in-progress section, or that testimonial from your ex-client. Whatever the reason - Hide It has your back.
+## Features
 
-Works with both **Block List** and **Block Grid** editors.
-
-## What's in the Box?
-
-- **One-Click Toggle** — Eye icon right there in the block action bar. Click it. Done.
-- **Visual Feedback** — Hidden blocks get dimmed so you know what's hiding
-- **Zero View Changes** — Hidden blocks vanish from the frontend *automagically*
-- **Search-Safe Content** — Hidden block content is excluded from Umbraco search indexing
-- **Nested Support** — BlockGrid areas? Yep, filters all the way down
+- **One-click toggle**: An eye icon in the block action bar switches a block between visible and hidden
+- **Visual feedback**: Hidden blocks are visually dimmed in the backoffice
+- **No view changes required**: Hidden blocks are automatically excluded from frontend rendering
+- **Search-safe**: Hidden block content is excluded from Umbraco search indexing
+- **Nested support**: Filtering applies recursively within Block Grid areas
 
 <img width="1220" height="874" alt="Hide It" src="https://github.com/user-attachments/assets/2ef439b4-ddc3-46ed-b751-25a90f748816" />
-
 
 ## Installation
 
@@ -27,40 +22,41 @@ Works with both **Block List** and **Block Grid** editors.
 dotnet add package Our.Umbraco.HideIt
 ```
 
-## Setup (It's Stupid Simple)
+## Setup
 
 1. Add a **True/False** property to your block's **Settings** element type
-2. Give it the alias `hideIt`
-3. There is no step 3
+2. Set its alias to `hideIt`
 
-The toggle appears. The magic happens. Your frontend stays clean.
+The toggle appears automatically in the block action bar.
 
 <img width="876" height="288" alt="toggle-button" src="https://github.com/user-attachments/assets/ce41eeb2-c2c9-4066-a959-055bfb69e0f9" />
 
-Need more control? See **Advanced / Extensibility** near the end.
+See **Advanced / Extensibility** below for configuration options.
 
 ## How It Works
 
-### On the Frontend
-Nothing! That's the point. Hidden blocks just... aren't there. The package intercepts Umbraco's property converters and filters them out before your views even see them.
+Hide It replaces Umbraco's built-in block property value converters. Hidden blocks are filtered out before reaching your views, so no template changes are required.
 
 ## Requirements
 
-- Umbraco **17.5+** _(that's when [block actions](https://releases.umbraco.com/release/umbraco/Umbraco-CMS/17.5.0) became a thing)_ or **18.x**
-- .NET 10.0
+- Umbraco **17.5+** _(that's when [block actions](https://releases.umbraco.com/release/umbraco/Umbraco-CMS/17.5.0) became a thing)_, **18.x**, or **19.x** (pre-release)
+- .NET 10.0 (.NET 11 for Umbraco 19)
 
 ## Versions
 
-| Package Version | Umbraco Version |
-|-----------------|-----------------|
-| 18.x            | 18.0.0 - 18.x   |
-| 17.x            | 17.5.0 - 17.x   |
+| Package Version        | Umbraco Version    |
+|-------------------------|---------------------|
+| 19.x _(pre-release)_   | 19.0.0-beta1+       |
+| 18.x                    | 18.0.0 - 18.x       |
+| 17.x                    | 17.5.0 - 17.x       |
+
+> **Note:** `19.x` tracks Umbraco 19, which is currently in **beta**. These releases are published as GitHub/NuGet pre-releases and may contain breaking changes until Umbraco 19 reaches a stable (GA) release.
 
 ## Advanced / Extensibility
 
-### Custom Alias
+### Custom Property Alias
 
-Maybe `hideIt` isn't your style, or you're migrating a site that already has its own "hide this" property. Point Hide It at any alias in `appsettings.json`:
+To use an existing property instead of `hideIt`, set a custom alias in `appsettings.json`:
 
 ```json
 {
@@ -70,11 +66,11 @@ Maybe `hideIt` isn't your style, or you're migrating a site that already has its
 }
 ```
 
-Both the backoffice toggle and the frontend filtering pick up the custom alias. Leave the setting out and the default `hideIt` keeps working.
+Both the backoffice toggle and the frontend filtering use this alias. If unset, `hideIt` is used.
 
-### Want Full Control of Block Styling?
+### Custom Styling
 
-Set `HideIt:CssPath` to your own stylesheet path in `appsettings.json`:
+To use your own styling instead of the default dimmed appearance, set `HideIt:CssPath`:
 
 ```json
 {
@@ -84,19 +80,17 @@ Set `HideIt:CssPath` to your own stylesheet path in `appsettings.json`:
 }
 ```
 
-- If `CssPath` is **not set**, Hide It keeps the current default dimmed styling for hidden blocks.
-- If `CssPath` **is set**, Hide It skips its default styling and loads your stylesheet instead (including inside block-entry shadow roots).
+- If unset, Hide It applies its default dimmed styling to hidden blocks.
+- If set, Hide It's default styling is skipped and your stylesheet is loaded instead (including inside block-entry shadow roots).
 
-Hide It adds these state markers on each block entry:
+Hide It applies these markers to each block entry, which can be targeted in custom CSS:
 
-- Hidden state: `data-hideit-hidden` attribute + `.hideit-block--hidden` class
+- Hidden state: `data-hideit-hidden` attribute and `.hideit-block--hidden` class
 - Visible state: `.hideit-block--visible` class
-
-Use those selectors in your CSS to style hidden/visible blocks exactly how you want.
 
 ### Custom Action Icons
 
-You can override the action icon for both states in `appsettings.json`:
+Override the action icon for each state in `appsettings.json`:
 
 ```json
 {
@@ -107,31 +101,29 @@ You can override the action icon for both states in `appsettings.json`:
 }
 ```
 
-- `VisibleIcon` controls the icon shown when the block is currently visible.
-- `HiddenIcon` controls the icon shown when the block is currently hidden.
-- Values must be SVG paths (for example `/icons/power.svg`).
+- `VisibleIcon` is shown when the block is visible.
+- `HiddenIcon` is shown when the block is hidden.
+- Values must be paths to SVG files.
 
 ### Manual Filtering
 
-Don't trust the magic? Fair. Extension methods are available:
+Extension methods are available for filtering outside the automatic pipeline:
 
 ```csharp
 using HideIt;
 
-// Filter manually
 var visibleBlocks = Model.Blocks.WhereVisible();
 var visibleGrid = Model.Grid.WhereVisible();
 
-// Check a single block
 if (!block.IsBlockHidden())
 {
-    // This block is ready for its close-up
+    // Block is visible
 }
 ```
 
 ### Custom Block Conversion Pipeline
 
-If you previously replaced `BlockListPropertyValueConverter` or `BlockGridPropertyValueConverter`, switch to Hide It's filter extension points instead:
+If you have replaced `BlockListPropertyValueConverter` or `BlockGridPropertyValueConverter` with your own implementation, use Hide It's filter extension points instead of chaining converter `Replace<>()` calls:
 
 ```csharp
 using HideIt;
@@ -139,14 +131,14 @@ using Umbraco.Cms.Core.Models.Blocks;
 
 public class MyCustomBlockListFilter : IHideItBlockListFilter {
     public BlockListModel Filter(BlockListModel model) {
-        // Your custom filtering/transformation
+        // Custom filtering/transformation
         return model;
     }
 }
 
 public class MyCustomBlockGridFilter : IHideItBlockGridFilter {
     public BlockGridModel Filter(BlockGridModel model) {
-        // Your custom filtering/transformation
+        // Custom filtering/transformation
         return model;
     }
 }
@@ -155,23 +147,22 @@ builder.Services.AddSingleton<IHideItBlockListFilter, MyCustomBlockListFilter>()
 builder.Services.AddSingleton<IHideItBlockGridFilter, MyCustomBlockGridFilter>();
 ```
 
-This keeps Hide It's built-in hide logic and your custom logic in the same pipeline without chained converter `Replace<>()` calls.
+This keeps Hide It's built-in filtering and your custom logic in the same pipeline.
 
 ## Contributing
 
-### Local Umbraco test site
+### Local Umbraco Test Site
 
-An in-repo Umbraco 18 site is available under `HideIt.Test`.
+An in-repo Umbraco 19 (pre-release) site is available under `HideIt.Test`.
 
 - Open `HideIt.slnx`
 - Start `HideIt.Test` with **IIS Express** or the **Umbraco.Web.UI** profile
-- The site uses the local `HideIt.csproj` via project reference, so backoffice/frontend changes are picked up automatically
-- The sample is intentionally a single-page homepage test surface focused on **Content Rows** (Block List) and **Content Grid** (Block Grid)
-- The sample ships with a seeded SQLite database, so you can start testing immediately
+- The site references `HideIt.csproj` directly, so backoffice/frontend changes are picked up automatically
+- The sample is a single-page homepage focused on **Content Rows** (Block List) and **Content Grid** (Block Grid)
+- A seeded SQLite database is included, so you can start testing immediately
 - Backoffice login: `admin@example.com` / `1234567890`
 
-Found a bug? Create an issue [here](https://github.com/andreaslborg/HideIt/issues).
-Got an idea? PRs welcome!
+Found a bug or have a feature request? Open an issue [here](https://github.com/andreaslborg/HideIt/issues). Pull requests are welcome.
 
 ## License
 

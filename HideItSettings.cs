@@ -39,7 +39,7 @@ public partial class HideItSettings {
   /// The property alias used to determine if a block should be hidden.
   /// Defaults to "hideIt".
   /// </summary>
-  public string PropertyAlias { get; } = DefaultPropertyAlias;
+  public string PropertyAlias { get; }
 
   /// <summary>
   /// Optional custom stylesheet path for block state styling.
@@ -50,15 +50,12 @@ public partial class HideItSettings {
   /// <summary>
   /// The icon shown when a block is visible.
   /// </summary>
-  public string VisibleIcon { get; } = DefaultVisibleIcon;
+  public string VisibleIcon { get; }
 
   /// <summary>
   /// The icon shown when a block is hidden.
   /// </summary>
-  public string HiddenIcon { get; } = DefaultHiddenIcon;
-
-  public HideItSettings() {
-  }
+  public string HiddenIcon { get; }
 
   public HideItSettings( string? propertyAlias, string? cssPath = null, string? visibleIcon = null, string? hiddenIcon = null ) {
     PropertyAlias = NormalizePropertyAlias( propertyAlias );
