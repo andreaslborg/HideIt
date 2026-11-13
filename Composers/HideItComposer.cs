@@ -2,15 +2,12 @@
 // MIT Licensed.
 
 using HideIt.Filters;
-using HideIt.PropertyEditors;
 using HideIt.ValueConverters;
 using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
 using Umbraco.Cms.Core.Composing;
 using Umbraco.Cms.Core.DependencyInjection;
-using Umbraco.Cms.Core.PropertyEditors;
 using Umbraco.Cms.Core.PropertyEditors.ValueConverters;
 
 namespace HideIt.Composers;
@@ -33,7 +30,6 @@ public class HideItComposer : IComposer {
       builder.Services.AddSingleton( Options.Create( settings ) );
       builder.Services.AddSingleton<IHideItBlockListFilter, HideItVisibilityBlockListFilter>();
       builder.Services.AddSingleton<IHideItBlockGridFilter, HideItVisibilityBlockGridFilter>();
-      builder.Services.Replace( ServiceDescriptor.Singleton<IBlockValuePropertyIndexValueFactory, HideItBlockValuePropertyIndexValueFactory>() );
       BlockExtensions.SetPropertyAlias( settings.PropertyAlias );
 
       // Replace the built-in converters with our HideIt-aware versions
